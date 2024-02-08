@@ -1,5 +1,6 @@
 /* viide elemendile st muudame kõiki selliseid elemente */
 body {
+    background-color: darksalmon;
     display: flex;
     padding: 1em;
     flex-direction: column;
@@ -8,11 +9,18 @@ body {
 }
 /* #-ga viitame elemendile, millel on selline id */
 #photo {
-    max-width: 25em;
-    max-height: 30em;
+    min-width: 25em;
+    min-height: 25em;
+    }
+}
+#photo1 {
+min-width: 25em;
+min-height: 25em;
+
 }
 /* .-ga viitame elemenditele, millel on selline class */
 .container {
+    background-color: burlywood;
     display: flex;
     padding: 1em;
     align-items: center;
@@ -28,7 +36,7 @@ body {
 
 .card {
     width: 20em;
-    height: 25em;
+    height: 20em;
     display: flex;
     flex-direction: column;
     align-items: center;
