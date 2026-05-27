@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="et">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turundusagenda – Reflective Leather Bag Charm</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f0eb;
+            color: #1a1a1a;
+            padding: 2em;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 1.5em;
+            margin-bottom: 2.5em;
+        }
+
+        header h1 {
+            font-size: 0.85em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 0.4em;
+        }
+
+        header h2 {
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        header p.tagline {
+            font-size: 1em;
+            color: #555;
+            margin-top: 0.3em;
+            font-style: italic;
+        }
+
+        section {
+            margin-bottom: 3em;
+        }
+
+        section h3 {
+            font-size: 0.75em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #888;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5em;
+            margin-bottom: 1.5em;
+        }
+
+        /* Tootmisfotod */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1em;
+        }
+
+        .photo-grid img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            display: block;
+            background: #ddd;
+        }
+
+        .photo-grid .photo-placeholder {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: #e8e2dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #999;
+            text-align: center;
+            padding: 1em;
+        }
+
+        /* Tooteinfo */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2em;
+        }
+
+        .info-block {
+            background: #fff;
+            padding: 1.5em;
+            border-left: 3px solid #1a1a1a;
+        }
+
+        .info-block h4 {
+            font-size: 0.7em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 0.8em;
+        }
+
+        .info-block p,
+        .info-block li {
+            font-size: 0.9em;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .info-block ul {
+            padding-left: 1.2em;
+        }
+
+        /* Mõõdud tabel */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        table td {
+            padding: 0.5em 0.8em;
+            border-bottom: 1px solid #e8e2dc;
+            color: #333;
+        }
+
+        table td:first-child {
+            color: #888;
+            width: 55%;
+        }
+
+        /* Värvid */
+        .color-swatches {
+            display: flex;
+            gap: 1.5em;
+            align-items: center;
+        }
+
+        .swatch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4em;
+            font-size: 0.75em;
+            color: #666;
+        }
+
+        .swatch-dot {
+            width: 2.5em;
+            height: 2.5em;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+        }
+
+        /* Hind */
+        .cost-table td:last-child {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .cost-total td {
+            font-weight: 700;
+            border-top: 2px solid #1a1a1a;
+            font-size: 1em;
+        }
+
+        /* Instagram plokk */
+        .instagram-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2em;
+            align-items: start;
+        }
+
+        .ig-photo-placeholder {
+            background: #e8e2dc;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #999;
+            text-align: center;
+        }
+
+        .ig-copy {
+            background: #fff;
+            padding: 1.5em;
+            font-size: 0.9em;
+            line-height: 1.8;
+            color: #333;
+            border-left: 3px solid #1a1a1a;
+        }
+
+        .ig-copy .caption-label {
+            font-size: 0.7em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 0.6em;
+        }
+
+        .ig-copy .hashtags {
+            margin-top: 1em;
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        /* Brändipositsioon */
+        .brand-pillars {
+            display: flex;
+            gap: 1em;
+        }
+
+        .pillar {
+            flex: 1;
+            background: #1a1a1a;
+            color: #f5f0eb;
+            padding: 1.2em 1.5em;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        .pillar strong {
+            display: block;
+            font-size: 0.75em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #aaa;
+            margin-bottom: 0.4em;
+        }
+
+        /* Toote eelised */
+        .benefits-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8em;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 0.7em;
+            align-items: flex-start;
+            font-size: 0.9em;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .benefit-item::before {
+            content: '→';
+            color: #888;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Turundusagenda · Toote tutvustus</h1>
+        <h2>REFLECTIVE LEATHER BAG CHARM</h2>
+        <p class="tagline">Minimaalne. Funktsionaalne. Nähtav.</p>
+    </header>
+
+    <!-- TOOTMISFOTOD -->
+    <section>
+        <h3>Tootmisfotod — reaalne tootmine</h3>
+        <div class="photo-grid">
+            <div class="photo-placeholder">Tootmisfoto 1<br>Naha lõikamine</div>
+            <div class="photo-placeholder">Tootmisfoto 2<br>Materjalid laual</div>
+            <div class="photo-placeholder">Tootmisfoto 3<br>Käsitöö detailid</div>
+        </div>
+        <p style="font-size:0.78em; color:#999; margin-top:0.8em;">
+            Lisa siia tootmisfotod (3 fotot töötoa laual punase ja musta nahaga).
+        </p>
+    </section>
+
+    <!-- TOOTEINFO -->
+    <section>
+        <h3>Toote spetsifikatsioon</h3>
+        <div class="product-grid">
+
+            <div class="info-block">
+                <h4>Mõõdud</h4>
+                <table>
+                    <tr><td>Ripats (nahkosa)</td><td>7 cm × 4,8 cm</td></tr>
+                    <tr><td>Helkurmaterjal (mõlemal pool)</td><td>5,5 cm × 2,8–3 cm</td></tr>
+                    <tr><td>Nahastriba laius</td><td>6–7 mm</td></tr>
+                    <tr><td>Nahastriba paksus</td><td>1–1,2 mm</td></tr>
+                    <tr><td>Nahastriba pikkus</td><td>35–45 cm</td></tr>
+                    <tr><td>Metallrõngas</td><td>Ø 28–32 mm</td></tr>
+                    <tr><td>Kogupikkus</td><td>~35–45 cm</td></tr>
+                </table>
+            </div>
+
+            <div class="info-block">
+                <h4>Materjalid</h4>
+                <ul>
+                    <li>Nahk (taaskasutatud jäägid)</li>
+                    <li>Helkurmaterjal mõlemal pool<br><span style="color:#999; font-size:0.9em">(EN 17353 sertifitseeritud)</span></li>
+                    <li>Helkurniidid</li>
+                    <li>Metallrõngas — gunmetal viimistlus</li>
+                </ul>
+            </div>
+
+            <div class="info-block">
+                <h4>Värvivalik</h4>
+                <div class="color-swatches">
+                    <div class="swatch">
+                        <div class="swatch-dot" style="background:#1a1a1a;"></div>
+                        Must
+                    </div>
+                    <div class="swatch">
+                        <div class="swatch-dot" style="background:#4a3728;"></div>
+                        Tumepruun
+                    </div>
+                    <div class="swatch">
+                        <div class="swatch-dot" style="background:#c08b5c;"></div>
+                        Karamell
+                    </div>
+                    <div class="swatch">
+                        <div class="swatch-dot" style="background:#d9c9b0;"></div>
+                        Beež
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <h4>Hinnanguline omahind</h4>
+                <table class="cost-table">
+                    <tr><td>Nahk (jääk)</td><td>~0,80 €</td></tr>
+                    <tr><td>Helkurmaterjal</td><td>~0,60 €</td></tr>
+                    <tr><td>Helkurniidid</td><td>~0,20 €</td></tr>
+                    <tr><td>Metallrõngas</td><td>~0,30 €</td></tr>
+                    <tr class="cost-total"><td>Kokku</td><td>~1,90 € / tk</td></tr>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TOOTE EELISED -->
+    <section>
+        <h3>Toote eelised</h3>
+        <div class="benefits-list">
+            <div class="benefit-item">Elegantne ja unisex disain</div>
+            <div class="benefit-item">Sobib nii kotile kui ka jopele</div>
+            <div class="benefit-item">Helkurmaterjal mõlemal pool tagab nähtavuse</div>
+            <div class="benefit-item">Käsitöö ja kvaliteetne viimistlus</div>
+            <div class="benefit-item">Vastab EL standardile EN 17353</div>
+            <div class="benefit-item">Minimalistlik taaskasutatud pakend brändiga logoga</div>
+        </div>
+    </section>
+
+    <!-- BRÄNDI POSITSIOON -->
+    <section>
+        <h3>Brändi positsioon</h3>
+        <div class="brand-pillars">
+            <div class="pillar"><strong>Identiteet</strong>Minimaalne. Urban. Turvaline.</div>
+            <div class="pillar"><strong>Kontekst</strong>Disainitud linnakeskkonda.</div>
+            <div class="pillar"><strong>Funktsioon</strong>Nähtav siis, kui vaja.</div>
+            <div class="pillar"><strong>Stiil</strong>Stiilne alati.</div>
+        </div>
+    </section>
+
+    <!-- INSTAGRAM -->
+    <section>
+        <h3>Instagram — näitepostitus reaalsest tootmisest</h3>
+        <div class="instagram-block">
+            <div class="ig-photo-placeholder">
+                Instagram postitus<br>Tootmisfoto töötoas<br>(punane + must nahk)
+            </div>
+            <div class="ig-copy">
+                <p class="caption-label">Näitekaptioon</p>
+                <p>
+                    Iga tükk algab kätest ja materjalist. ✂️<br><br>
+                    Meie helkurpäkad valmivad käsitsi — taaskasutatud nahajäägid saavad uue elu
+                    ja funktsioon: teha sind linnas nähtavaks just siis, kui see kõige rohkem loeb.
+                    <br><br>
+                    Minimalistlik. Urbic. Sinu laadis.
+                </p>
+                <p class="hashtags">
+                    #reflectiveleather #käsitöö #sustainablefashion #bagcharm
+                    #helkur #linnastiil #eestidesign #handmade #nähtavus
+                </p>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
