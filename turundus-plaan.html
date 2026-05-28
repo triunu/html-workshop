@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turundusplaan · Brand Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #060402;
+            color: #e8d4b0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            bottom: -20vh; right: -10vw;
+            width: 70vw; height: 70vh;
+            background: radial-gradient(ellipse, rgba(200,100,20,0.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── TOP NAV ── */
+        .topnav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1em 2.5em;
+            border-bottom: 1px solid rgba(220,140,50,0.08);
+            background: rgba(6,4,2,0.95);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .back { font-size: 0.65em; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(180,120,50,0.4); text-decoration: none; transition: color 0.2s; }
+        .back:hover { color: rgba(220,140,60,0.7); }
+
+        .topnav-title { font-family: 'Playfair Display', serif; font-weight: 300; font-size: 0.95em; color: rgba(240,220,180,0.7); }
+
+        .topnav-right { font-size: 0.65em; color: rgba(140,100,40,0.4); letter-spacing: 0.1em; }
+
+        /* ── PAGE ── */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3em 2.5em 6em;
+            position: relative; z-index: 1;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            margin-bottom: 4em;
+            border-bottom: 1px solid rgba(220,140,50,0.08);
+            padding-bottom: 3em;
+        }
+
+        .hero-label {
+            font-size: 0.6em;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: rgba(200,140,60,0.4);
+            margin-bottom: 1em;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 300;
+            font-size: clamp(2em, 5vw, 3.5em);
+            line-height: 1.1;
+            color: #f0dfc0;
+            margin-bottom: 0.6em;
+        }
+
+        .hero h1 em { font-style: italic; color: rgba(220,130,50,0.85); }
+
+        .hero-sub {
+            font-size: 0.82em;
+            color: rgba(180,140,80,0.5);
+            line-height: 1.7;
+            max-width: 600px;
+        }
+
+        .budget-bar {
+            display: flex;
+            gap: 2em;
+            margin-top: 2em;
+            flex-wrap: wrap;
+        }
+
+        .budget-item {
+            background: rgba(20,15,6,0.8);
+            border: 1px solid rgba(220,140,50,0.12);
+            padding: 1em 1.5em;
+        }
+
+        .budget-item .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6em;
+            color: rgba(220,130,50,0.9);
+            font-weight: 300;
+        }
+
+        .budget-item .lbl {
+            font-size: 0.6em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(160,110,50,0.4);
+            margin-top: 0.3em;
+        }
+
+        /* ── SECTION ── */
+        section {
+            margin-bottom: 4em;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1.5em;
+            margin-bottom: 1.5em;
+            border-bottom: 1px solid rgba(220,140,50,0.07);
+            padding-bottom: 0.8em;
+        }
+
+        .section-num {
+            font-size: 0.6em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(180,120,50,0.3);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 300;
+            font-size: 1.3em;
+            color: rgba(240,215,170,0.85);
+        }
+
+        .section-badge {
+            font-size: 0.6em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.2em 0.7em;
+            border: 1px solid rgba(220,140,50,0.2);
+            color: rgba(220,140,60,0.6);
+            margin-left: auto;
+        }
+
+        /* ── TASK CARD ── */
+        .task-card {
+            background: rgba(12,8,2,0.7);
+            border: 1px solid rgba(80,55,20,0.2);
+            margin-bottom: 1em;
+            transition: border-color 0.2s;
+        }
+
+        .task-card:hover { border-color: rgba(220,140,50,0.2); }
+
+        .task-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            padding: 1em 1.2em;
+            cursor: pointer;
+        }
+
+        .task-status {
+            width: 16px; height: 16px;
+            border: 1px solid rgba(180,120,50,0.3);
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .task-status.done {
+            background: rgba(220,140,50,0.3);
+            border-color: rgba(220,140,50,0.5);
+        }
+
+        .task-status.done::after {
+            content: '✓';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 9px;
+            color: rgba(240,215,170,0.9);
+        }
+
+        .task-main { flex: 1; }
+
+        .task-name {
+            font-size: 0.85em;
+            color: rgba(240,215,170,0.85);
+            margin-bottom: 0.2em;
+            line-height: 1.4;
+        }
+
+        .task-name.done-text { text-decoration: line-through; color: rgba(160,120,60,0.4); }
+
+        .task-meta {
+            display: flex;
+            gap: 1em;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 0.58em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.15em 0.5em;
+            border: 1px solid;
+        }
+
+        .tag-triinu { border-color: rgba(220,140,50,0.3); color: rgba(220,140,60,0.7); background: rgba(220,140,50,0.06); }
+        .tag-cost { border-color: rgba(100,160,80,0.3); color: rgba(100,160,80,0.7); background: rgba(100,160,80,0.06); }
+        .tag-time { border-color: rgba(100,130,180,0.3); color: rgba(120,150,200,0.6); background: rgba(100,130,180,0.06); }
+        .tag-prio { border-color: rgba(200,80,60,0.3); color: rgba(200,100,80,0.7); background: rgba(200,80,60,0.06); }
+
+        .task-detail {
+            display: none;
+            padding: 0 1.2em 1.2em 3.2em;
+            font-size: 0.78em;
+            color: rgba(180,140,80,0.55);
+            line-height: 1.7;
+            border-top: 1px solid rgba(80,55,20,0.15);
+            margin-top: 0;
+            padding-top: 0.8em;
+        }
+
+        .task-detail.open { display: block; }
+
+        .task-detail ul { padding-left: 1.2em; }
+        .task-detail li { margin-bottom: 0.3em; }
+        .task-detail strong { color: rgba(220,160,70,0.8); font-weight: 500; }
+
+        /* ── TIMELINE ── */
+        .timeline {
+            position: relative;
+            padding-left: 1.5em;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, rgba(220,140,50,0.3), rgba(220,140,50,0.05));
+        }
+
+        .tl-item {
+            position: relative;
+            padding: 0 0 2em 2em;
+        }
+
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: -4px; top: 0.3em;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            border: 1px solid rgba(220,140,50,0.4);
+            background: #060402;
+        }
+
+        .tl-item.current::before {
+            background: rgba(220,140,50,0.5);
+            box-shadow: 0 0 8px rgba(220,140,50,0.3);
+        }
+
+        .tl-date {
+            font-size: 0.65em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(220,140,60,0.5);
+            margin-bottom: 0.4em;
+        }
+
+        .tl-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95em;
+            color: rgba(240,215,170,0.8);
+            margin-bottom: 0.4em;
+        }
+
+        .tl-desc {
+            font-size: 0.75em;
+            color: rgba(160,120,60,0.45);
+            line-height: 1.6;
+        }
+
+        .tl-tags { display: flex; gap: 0.5em; margin-top: 0.5em; flex-wrap: wrap; }
+
+        /* ── INFLUENCER TABLE ── */
+        .inf-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .inf-table th {
+            font-size: 0.6em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(160,110,50,0.4);
+            padding: 0.6em 1em;
+            border-bottom: 1px solid rgba(80,55,20,0.3);
+            text-align: left;
+            font-weight: 400;
+        }
+
+        .inf-table td {
+            font-size: 0.78em;
+            padding: 0.8em 1em;
+            border-bottom: 1px solid rgba(80,55,20,0.12);
+            color: rgba(200,165,100,0.7);
+            vertical-align: top;
+        }
+
+        .inf-table td:first-child { color: rgba(240,215,170,0.8); }
+
+        .inf-send {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border: 1px solid rgba(180,120,50,0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+            vertical-align: middle;
+        }
+
+        .inf-send.sent { background: rgba(100,160,80,0.4); border-color: rgba(100,160,80,0.6); }
+
+        /* ── PHOTO BRIEF ── */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1em;
+        }
+
+        .photo-brief-card {
+            background: rgba(12,8,2,0.7);
+            border: 1px solid rgba(80,55,20,0.2);
+            padding: 1.2em;
+        }
+
+        .photo-brief-card .pb-num {
+            font-size: 0.55em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(180,120,50,0.3);
+            margin-bottom: 0.6em;
+        }
+
+        .photo-brief-card .pb-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9em;
+            font-style: italic;
+            color: rgba(240,210,160,0.8);
+            margin-bottom: 0.6em;
+            line-height: 1.3;
+        }
+
+        .photo-brief-card .pb-desc {
+            font-size: 0.7em;
+            color: rgba(160,120,60,0.45);
+            line-height: 1.6;
+        }
+
+        .photo-brief-card .pb-prop {
+            margin-top: 0.8em;
+            font-size: 0.65em;
+            color: rgba(220,140,60,0.5);
+            letter-spacing: 0.05em;
+        }
+
+        /* ── COST SUMMARY ── */
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cost-table tr { border-bottom: 1px solid rgba(80,55,20,0.15); }
+        .cost-table tr:last-child { border-bottom: 2px solid rgba(220,140,50,0.2); }
+        .cost-table tr.total { border-bottom: none; border-top: 2px solid rgba(220,140,50,0.25); }
+
+        .cost-table td {
+            padding: 0.7em 1em;
+            font-size: 0.8em;
+            color: rgba(200,160,90,0.65);
+        }
+
+        .cost-table td:first-child { color: rgba(240,215,170,0.8); }
+        .cost-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+        .cost-table tr.total td {
+            font-weight: 500;
+            color: rgba(220,140,60,0.9);
+            font-size: 0.9em;
+        }
+
+        .triinu-tag {
+            display: inline-block;
+            font-size: 0.55em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.1em 0.5em;
+            border: 1px solid rgba(220,140,50,0.25);
+            color: rgba(220,140,60,0.6);
+            vertical-align: middle;
+            margin-left: 0.5em;
+        }
+
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(140,90,30,0.3); }
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+    <a href="hub.html" class="back">← Tagasi</a>
+    <div class="topnav-title">Turundusplaan · Brand Studio</div>
+    <div class="topnav-right">2026</div>
+</div>
+
+<div class="page">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-label">Turundusagent · Plaan kinnitatud</div>
+        <h1>Launch<br><em>strateegia</em></h1>
+        <div class="hero-sub">
+            Vintage Coach kott propina · Profifoto sessioon · Celebrity gifting ·
+            Instagram launch · WooCommerce müük. Kõik sinu soovitused on märgitud
+            <strong style="color:rgba(220,140,60,0.8)">→ Triinu soovitas</strong>.
+        </div>
+
+        <div class="budget-bar">
+            <div class="budget-item">
+                <div class="val">~490€</div>
+                <div class="lbl">Kogu eelarve</div>
+            </div>
+            <div class="budget-item">
+                <div class="val">~8 nädalat</div>
+                <div class="lbl">Launchini</div>
+            </div>
+            <div class="budget-item">
+                <div class="val">10–15</div>
+                <div class="lbl">Influencer gifting</div>
+            </div>
+            <div class="budget-item">
+                <div class="val">Juuli</div>
+                <div class="lbl">Eesmärk: esimene müük</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. PHOTO PROP -->
+    <section>
+        <div class="section-header">
+            <div class="section-num">01</div>
+            <div class="section-title">Vintage Coach kott — prop fotodeks</div>
+            <div class="section-badge">Triinu soovitas ★</div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-card-header" onclick="toggle(this)">
+                <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                <div class="task-main">
+                    <div class="task-name">Osta vintage Coach nahkkott (Vinted / eBay / Humana)</div>
+                    <div class="task-meta">
+                        <span class="tag tag-triinu">★ Triinu soovitas</span>
+                        <span class="tag tag-cost">30–80€</span>
+                        <span class="tag tag-time">1–2 nädalat</span>
+                        <span class="tag tag-prio">Prioriteet 1</span>
+                    </div>
+                </div>
+            </div>
+            <div class="task-detail">
+                <strong>Miks Coach?</strong> Coach on tuntud luksusnahkkott-bränd — seostub täpselt sinu sihtgrupi esteetikaga. Vintage = taaskasutus + autentne aesthetics.<br><br>
+                <strong>Mida otsida:</strong>
+                <ul>
+                    <li>Must või tumepruun Coach nahkkott (klassikaline stiil)</li>
+                    <li>Suurus: medium/large — et ripats oleks näha</li>
+                    <li>Seisukord: hea, mõned kasutuse jäljed on okei (authentic)</li>
+                    <li>Platvormid: <strong>Vinted.ee</strong>, Depop, eBay, Humana pood Tallinnas</li>
+                </ul>
+                <br><strong>Foto kontseptsioon:</strong> Ripats Coach koti sangal, tumeda tausta ees. Editorial, mitte toote-kataloog.
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-card-header" onclick="toggle(this)">
+                <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                <div class="task-main">
+                    <div class="task-name">Telli/valmista esimene prooviseeria (10–20 tk)</div>
+                    <div class="task-meta">
+                        <span class="tag tag-cost">19–38€ materjal</span>
+                        <span class="tag tag-time">1 nädal tootmine</span>
+                    </div>
+                </div>
+            </div>
+            <div class="task-detail">
+                Materjal olemas (jäägid). Telli helkurmaterjal + metallrõngad enne 13. juunit.<br>
+                Tootmine: käsitsi, ~2–3 tundi 10 tüki jaoks.<br>
+                Värvid fotoeks: <strong>Must + Karamell</strong> (mõlemad pildile).
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. PHOTO SHOOT -->
+    <section>
+        <div class="section-header">
+            <div class="section-num">02</div>
+            <div class="section-title">Profifoto sessioon</div>
+            <div class="section-badge">Triinu soovitas ★</div>
+        </div>
+
+        <div class="photo-grid" style="margin-bottom:1.5em">
+            <div class="photo-brief-card">
+                <div class="pb-num">Shot 01</div>
+                <div class="pb-title">Close-up sangal</div>
+                <div class="pb-desc">Ripats Coach koti sangal. Tume taust, soft bokeh. Must nahk + gunmetal rõngas.</div>
+                <div class="pb-prop">Prop: Coach kott · Must foon</div>
+            </div>
+            <div class="photo-brief-card">
+                <div class="pb-num">Shot 02</div>
+                <div class="pb-title">Helk pimeduses</div>
+                <div class="pb-desc">Ripats täielikus pimeduses — ainult helkuri kuma on näha. Ülimalt impact.</div>
+                <div class="pb-prop">Prop: Tuba pimedas · Taskulamp</div>
+            </div>
+            <div class="photo-brief-card">
+                <div class="pb-num">Shot 03</div>
+                <div class="pb-title">Lifestyle — kandmisel</div>
+                <div class="pb-desc">Kott õlal, ripats liigub. Tume linnatänav / öö. "Nähtav kui liigud."</div>
+                <div class="pb-prop">Prop: Coach kott · Tänav öösel</div>
+            </div>
+            <div class="photo-brief-card">
+                <div class="pb-num">Shot 04</div>
+                <div class="pb-title">Flatlay — esteetiline</div>
+                <div class="pb-desc">Ripats + Coach kott + mustad aksessuaarid marmor- või tumepuittaustal.</div>
+                <div class="pb-prop">Prop: Must marmor / puit</div>
+            </div>
+            <div class="photo-brief-card">
+                <div class="pb-num">Shot 05</div>
+                <div class="pb-title">Detail — materjal</div>
+                <div class="pb-desc">Extreem close-up: helkurmaterjal, helkurniidid, metallrõngas. Käsitöö nähtav.</div>
+                <div class="pb-prop">Macro lääts või portreelääts</div>
+            </div>
+            <div class="photo-brief-card">
+                <div class="pb-num">Shot 06</div>
+                <div class="pb-title">4 värvivaliku flatlay</div>
+                <div class="pb-desc">Kõik 4 värvi kõrvuti — must, tumepruun, karamell, beež. Brändi ülevaade.</div>
+                <div class="pb-prop">Tume taust, ühtne valgus</div>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-card-header" onclick="toggle(this)">
+                <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                <div class="task-main">
+                    <div class="task-name">Broneeri profifotograaf Tallinnasse / Pärnu (juuni lõpp)</div>
+                    <div class="task-meta">
+                        <span class="tag tag-triinu">★ Triinu soovitas</span>
+                        <span class="tag tag-cost">150–300€</span>
+                        <span class="tag tag-time">3–4 tundi sessioon</span>
+                    </div>
+                </div>
+            </div>
+            <div class="task-detail">
+                <strong>Alternatiiv:</strong> DIY — iPhone 15 Pro + ring light + must foon = täiesti teostatav.<br><br>
+                <strong>Soovitatud aeg:</strong> 20.–25. juuni (pärast SEB avaüritust, enne Suvemänge).<br>
+                <strong>Stiil brief fotograafile:</strong> Tume, editorial, mitte valge stuudio. Coach kott. Helk.
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. CELEBRITY GIFTING -->
+    <section>
+        <div class="section-header">
+            <div class="section-num">03</div>
+            <div class="section-title">Celebrity & Influencer Gifting</div>
+            <div class="section-badge">Triinu soovitas ★</div>
+        </div>
+
+        <div class="task-card" style="margin-bottom:1.5em">
+            <div class="task-card-header" onclick="toggle(this)">
+                <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                <div class="task-main">
+                    <div class="task-name">Vali 10–15 Eesti influencerit/celebrity — saada kinkepakk</div>
+                    <div class="task-meta">
+                        <span class="tag tag-triinu">★ Triinu soovitas</span>
+                        <span class="tag tag-cost">~60–80€ kokku</span>
+                        <span class="tag tag-time">Juuli algus</span>
+                    </div>
+                </div>
+            </div>
+            <div class="task-detail">
+                <strong>Pakendi sisu:</strong><br>
+                · 1× Leather Bag Charm (nende stiiliga sobiv värv)<br>
+                · Käsitsi kirjutatud kaart<br>
+                · Brändi visitkaart / mini-brošüür<br>
+                · Minimalistlik must karp logoga<br><br>
+                <strong>Sõnum kaardil:</strong> "Sinu jaoks — nähtav, kui liigud."<br><br>
+                <strong>Palve:</strong> Ei pea postima. Aga kui meeldib — jaga.
+            </div>
+        </div>
+
+        <table class="inf-table">
+            <thead>
+                <tr>
+                    <th>Nimi / Konto</th>
+                    <th>Platvorm</th>
+                    <th>Jälgijad</th>
+                    <th>Stiil</th>
+                    <th>Värvivalik</th>
+                    <th>Saadetud</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>[ Lisa nimi ]</td>
+                    <td>Instagram</td>
+                    <td>—</td>
+                    <td>Dark fashion</td>
+                    <td>Must</td>
+                    <td><div class="inf-send" onclick="this.classList.toggle('sent')"></div></td>
+                </tr>
+                <tr>
+                    <td>[ Lisa nimi ]</td>
+                    <td>Instagram / TikTok</td>
+                    <td>—</td>
+                    <td>Lifestyle</td>
+                    <td>Karamell</td>
+                    <td><div class="inf-send" onclick="this.classList.toggle('sent')"></div></td>
+                </tr>
+                <tr>
+                    <td>[ Lisa nimi ]</td>
+                    <td>Instagram</td>
+                    <td>—</td>
+                    <td>Mood / Travel</td>
+                    <td>Tumepruun</td>
+                    <td><div class="inf-send" onclick="this.classList.toggle('sent')"></div></td>
+                </tr>
+                <tr>
+                    <td>[ Lisa nimi ]</td>
+                    <td>Instagram</td>
+                    <td>—</td>
+                    <td>Fashion</td>
+                    <td>Must</td>
+                    <td><div class="inf-send" onclick="this.classList.toggle('sent')"></div></td>
+                </tr>
+                <tr>
+                    <td>[ Lisa nimi ]</td>
+                    <td>Instagram / Podcast</td>
+                    <td>—</td>
+                    <td>Äri / Elustiil</td>
+                    <td>Beež</td>
+                    <td><div class="inf-send" onclick="this.classList.toggle('sent')"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="color:rgba(140,100,40,0.3); font-size:0.7em; font-style:italic">
+                        + Lisa rohkem nimesid...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 4. TIMELINE -->
+    <section>
+        <div class="section-header">
+            <div class="section-num">04</div>
+            <div class="section-title">Ajakava</div>
+        </div>
+
+        <div class="timeline">
+            <div class="tl-item current">
+                <div class="tl-date">28. mai – 4. juuni · Praegu</div>
+                <div class="tl-title">Ettevalmistus enne Madridi</div>
+                <div class="tl-desc">Otsi vintage Coach kotti (Vinted). Kogu tarnijate kontaktid. Vali ettevõtte nimi.</div>
+                <div class="tl-tags">
+                    <span class="tag tag-cost">0€</span>
+                    <span class="tag tag-triinu">Coach otsing</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">5–9. juuni · Madrid ✈️</div>
+                <div class="tl-title">Puhkus + inspiratsioon</div>
+                <div class="tl-desc">Tee Madridis lifestyle fotosid mis inspireerivad. Vaata kohalikke leather poodisid.</div>
+                <div class="tl-tags"><span class="tag tag-triinu">★ Reisi</span></div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">10–14. juuni</div>
+                <div class="tl-title">Ettevõte asutamine + materjalide tellimine</div>
+                <div class="tl-desc">e-äriregister.ee OÜ asutamine. Telli helkurmaterjal + rõngad. Telli Coach kott.</div>
+                <div class="tl-tags">
+                    <span class="tag tag-cost">~100€</span>
+                    <span class="tag tag-time">3–4 päeva</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">15. juuni → SEB praktika algab</div>
+                <div class="tl-title">SEB + firma paralleelselt</div>
+                <div class="tl-desc">Tootmine õhtuti ja nädalavahetustel. Esimene prooviseeria 20 tk.</div>
+                <div class="tl-tags">
+                    <span class="tag tag-cost">~38€ materjal</span>
+                    <span class="tag tag-time">1–2 nädalat</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">20–25. juuni</div>
+                <div class="tl-title">Foto sessioon</div>
+                <div class="tl-desc">Kõik 6 shot'i. Coach kott propina. Profifoto või DIY.</div>
+                <div class="tl-tags">
+                    <span class="tag tag-triinu">★ Triinu soovitas</span>
+                    <span class="tag tag-cost">0–300€</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">1. juuli</div>
+                <div class="tl-title">Instagram launch + gifting saadab</div>
+                <div class="tl-desc">Esimene postitus. Saada kinkepakid 10–15 influencerile. WooCommerce pood avatud.</div>
+                <div class="tl-tags">
+                    <span class="tag tag-triinu">★ Triinu soovitas</span>
+                    <span class="tag tag-cost">~80€ gifting</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">Juuli → August</div>
+                <div class="tl-title">Müük + kasv</div>
+                <div class="tl-desc">Jälgi engagement. Postita 3× nädalas. Esimene tellimus = ✓.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. COST SUMMARY -->
+    <section>
+        <div class="section-header">
+            <div class="section-num">05</div>
+            <div class="section-title">Kulud kokku</div>
+        </div>
+
+        <table class="cost-table">
+            <tr>
+                <td>Vintage Coach kott (prop) <span class="triinu-tag">Triinu soovitas</span></td>
+                <td>Vinted / eBay</td>
+                <td>30–80€</td>
+            </tr>
+            <tr>
+                <td>Materjal — esimene seeria (20 tk)</td>
+                <td>Helkur + rõngad + niit</td>
+                <td>~38€</td>
+            </tr>
+            <tr>
+                <td>Profifoto sessioon <span class="triinu-tag">Triinu soovitas</span></td>
+                <td>Fotograaf / DIY</td>
+                <td>0–300€</td>
+            </tr>
+            <tr>
+                <td>Influencer gifting (10–15 tk) <span class="triinu-tag">Triinu soovitas</span></td>
+                <td>Toode + pakend + post</td>
+                <td>~60–80€</td>
+            </tr>
+            <tr>
+                <td>Pakend (branded karbid × 30)</td>
+                <td>Pakendifirma Eestis</td>
+                <td>~40–60€</td>
+            </tr>
+            <tr>
+                <td>OÜ asutamine</td>
+                <td>e-äriregister.ee</td>
+                <td>~190€ (riigilõiv)</td>
+            </tr>
+            <tr>
+                <td>WooCommerce / hostimine</td>
+                <td>Veebimajutus.ee + domeen</td>
+                <td>~20–30€/aasta</td>
+            </tr>
+            <tr class="total">
+                <td colspan="2"><strong>Kokku (miinimum — DIY foto)</strong></td>
+                <td><strong>~380€</strong></td>
+            </tr>
+            <tr class="total">
+                <td colspan="2"><strong>Kokku (profifoto)</strong></td>
+                <td><strong>~680€</strong></td>
+            </tr>
+        </table>
+
+        <p style="font-size:0.68em; color:rgba(140,100,40,0.4); margin-top:1em; line-height:1.6;">
+            * OÜ asutamise riigilõiv 190€ on ühekordne. Pärast esimest müügipartii (~20 tk × müügihind) kaetud.
+            Soovituslik müügihind: 18–25€/tk → 20 tk × 20€ = 400€ esimene käive.
+        </p>
+    </section>
+
+</div>
+
+<script>
+function toggle(header) {
+    const detail = header.nextElementSibling;
+    if (detail && detail.classList.contains('task-detail')) {
+        detail.classList.toggle('open');
+    }
+}
+
+function toggleStatus(e, el) {
+    e.stopPropagation();
+    el.classList.toggle('done');
+    const name = el.closest('.task-card-header').querySelector('.task-name');
+    if (name) name.classList.toggle('done-text');
+}
+</script>
+</body>
+</html>
