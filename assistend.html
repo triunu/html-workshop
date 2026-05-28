@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triinu · Assistent</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+        :root {
+            --bg: #0c0a08;
+            --bg2: #141008;
+            --card: #1a1410;
+            --card2: #201a12;
+            --amber: #d4924a;
+            --gold: #c9a84c;
+            --cream: #f0e4cc;
+            --muted: #8a7a64;
+            --dim: #4a4030;
+            --red: #c06040;
+            --green: #7a9a64;
+            --blue: #6480a0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--cream);
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* subtle noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* gradient top bar */
+        .topbar {
+            background: linear-gradient(135deg, #2a1808 0%, #1a1008 50%, #0c0a08 100%);
+            border-bottom: 1px solid #2a2010;
+            padding: 1.8em 2.5em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topbar::after {
+            content: '';
+            position: absolute;
+            right: -10em;
+            top: -10em;
+            width: 30em;
+            height: 30em;
+            background: radial-gradient(circle, rgba(212,146,74,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .topbar-left h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 400;
+            color: var(--cream);
+            letter-spacing: 0.02em;
+        }
+
+        .topbar-left h1 span {
+            color: var(--amber);
+            font-style: italic;
+        }
+
+        .topbar-left p {
+            font-size: 0.75em;
+            color: var(--muted);
+            margin-top: 0.3em;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .topbar-right {
+            text-align: right;
+        }
+
+        .live-time {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            color: var(--amber);
+            letter-spacing: 0.05em;
+            line-height: 1;
+        }
+
+        .live-date {
+            font-size: 0.72em;
+            color: var(--muted);
+            margin-top: 0.3em;
+            letter-spacing: 0.06em;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            margin-right: 0.4em;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(122,154,100,0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(122,154,100,0); }
+        }
+
+        /* main layout */
+        .main {
+            padding: 2em 2.5em;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 1.5em;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* cards */
+        .card {
+            background: var(--card);
+            border: 1px solid #2a2010;
+            border-radius: 2px;
+            padding: 1.5em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(to bottom, var(--amber), transparent);
+            opacity: 0.6;
+        }
+
+        .card.green::before { background: linear-gradient(to bottom, var(--green), transparent); }
+        .card.blue::before { background: linear-gradient(to bottom, var(--blue), transparent); }
+        .card.red::before { background: linear-gradient(to bottom, var(--red), transparent); }
+        .card.gold::before { background: linear-gradient(to bottom, var(--gold), transparent); }
+
+        .card-label {
+            font-size: 0.62em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1em;
+        }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: 1.1em;
+            color: var(--cream);
+            margin-bottom: 1em;
+        }
+
+        /* TODAY section - full width */
+        .card.today {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1e1408 0%, #141008 100%);
+            border-color: #3a2a10;
+        }
+
+        .today-inner {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2em;
+            align-items: start;
+        }
+
+        .today-greeting {
+            border-right: 1px solid #2a2010;
+            padding-right: 2em;
+        }
+
+        .today-greeting .greeting-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6em;
+            font-style: italic;
+            color: var(--cream);
+            line-height: 1.3;
+        }
+
+        .today-greeting .date-big {
+            font-size: 0.75em;
+            color: var(--muted);
+            margin-top: 0.5em;
+            letter-spacing: 0.05em;
+        }
+
+        .today-greeting .madrid-countdown {
+            margin-top: 1.2em;
+            background: rgba(212,146,74,0.1);
+            border: 1px solid rgba(212,146,74,0.2);
+            border-radius: 2px;
+            padding: 0.7em 1em;
+            font-size: 0.8em;
+            color: var(--amber);
+        }
+
+        .today-greeting .madrid-countdown strong {
+            display: block;
+            font-size: 1.6em;
+            font-family: 'Playfair Display', serif;
+            line-height: 1.1;
+        }
+
+        /* timeline events */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8em;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1em;
+        }
+
+        .event-time {
+            font-size: 0.72em;
+            color: var(--amber);
+            letter-spacing: 0.05em;
+            min-width: 4.5em;
+            padding-top: 0.1em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .event-bar {
+            width: 1px;
+            background: var(--dim);
+            position: relative;
+            min-height: 3.5em;
+            margin-top: 0.3em;
+        }
+
+        .event-bar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -3px;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--amber);
+            border: 1px solid var(--bg);
+        }
+
+        .event-content {
+            flex: 1;
+        }
+
+        .event-title {
+            font-size: 0.88em;
+            color: var(--cream);
+            font-weight: 400;
+            margin-bottom: 0.15em;
+        }
+
+        .event-sub {
+            font-size: 0.72em;
+            color: var(--muted);
+        }
+
+        .event-tag {
+            display: inline-block;
+            font-size: 0.6em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.15em 0.5em;
+            border-radius: 1px;
+            margin-left: 0.5em;
+            vertical-align: middle;
+        }
+
+        .tag-seb { background: rgba(100,128,160,0.2); color: var(--blue); border: 1px solid rgba(100,128,160,0.3); }
+        .tag-isik { background: rgba(212,146,74,0.15); color: var(--amber); border: 1px solid rgba(212,146,74,0.2); }
+        .tag-firma { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
+        .tag-reisi { background: rgba(192,96,64,0.15); color: var(--red); border: 1px solid rgba(192,96,64,0.2); }
+
+        /* TIMELINE - upcoming */
+        .card.timeline {
+            grid-column: 1 / -1;
+        }
+
+        .timeline-scroll {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            padding-bottom: 0.5em;
+        }
+
+        .timeline-scroll::-webkit-scrollbar { height: 2px; }
+        .timeline-scroll::-webkit-scrollbar-track { background: var(--bg2); }
+        .timeline-scroll::-webkit-scrollbar-thumb { background: var(--dim); }
+
+        .tl-item {
+            min-width: 13em;
+            border-right: 1px solid #2a2010;
+            padding: 0 1.5em 0.5em;
+            position: relative;
+        }
+
+        .tl-item:first-child { padding-left: 0; }
+
+        .tl-date {
+            font-size: 0.65em;
+            color: var(--amber);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5em;
+        }
+
+        .tl-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            border: 1px solid var(--amber);
+            background: var(--bg);
+            margin-bottom: 0.6em;
+            position: relative;
+        }
+
+        .tl-dot.filled { background: var(--amber); }
+        .tl-dot.green-dot { border-color: var(--green); }
+        .tl-dot.green-dot.filled { background: var(--green); }
+
+        .tl-event {
+            font-size: 0.8em;
+            color: var(--cream);
+            line-height: 1.4;
+        }
+
+        .tl-sub {
+            font-size: 0.7em;
+            color: var(--muted);
+            margin-top: 0.2em;
+        }
+
+        /* AREA CARDS */
+        .card.seb { border-color: rgba(100,128,160,0.3); }
+        .card.seb::before { background: linear-gradient(to bottom, var(--blue), transparent); }
+
+        .card.firma::before { background: linear-gradient(to bottom, var(--gold), transparent); }
+
+        .area-header {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            margin-bottom: 1.2em;
+        }
+
+        .area-icon {
+            width: 2em; height: 2em;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9em;
+        }
+
+        .icon-seb { background: rgba(100,128,160,0.15); color: var(--blue); }
+        .icon-firma { background: rgba(201,168,76,0.15); color: var(--gold); }
+        .icon-sport { background: rgba(122,154,100,0.15); color: var(--green); }
+        .icon-baka { background: rgba(212,146,74,0.15); color: var(--amber); }
+
+        .area-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1em;
+            color: var(--cream);
+        }
+
+        .area-status {
+            font-size: 0.65em;
+            color: var(--muted);
+            margin-left: auto;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* task list */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6em;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7em;
+            font-size: 0.82em;
+            color: var(--cream);
+            line-height: 1.4;
+            cursor: pointer;
+            padding: 0.4em 0;
+            border-bottom: 1px solid rgba(42,32,16,0.5);
+            transition: color 0.2s;
+        }
+
+        .task-item:last-child { border-bottom: none; }
+
+        .task-item:hover { color: var(--amber); }
+
+        .task-check {
+            width: 14px; height: 14px;
+            border: 1px solid var(--dim);
+            border-radius: 2px;
+            flex-shrink: 0;
+            margin-top: 0.1em;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .task-check.done {
+            background: var(--amber);
+            border-color: var(--amber);
+        }
+
+        .task-check.done::after {
+            content: '✓';
+            position: absolute;
+            color: var(--bg);
+            font-size: 9px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .task-text { flex: 1; }
+        .task-text.done-text { text-decoration: line-through; color: var(--muted); }
+
+        .task-date {
+            font-size: 0.75em;
+            color: var(--dim);
+            flex-shrink: 0;
+        }
+
+        /* metric mini */
+        .mini-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8em;
+            margin-top: 1em;
+        }
+
+        .mini-metric {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #2a2010;
+            padding: 0.6em 0.8em;
+            border-radius: 2px;
+        }
+
+        .mini-metric .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            color: var(--amber);
+        }
+
+        .mini-metric .lbl {
+            font-size: 0.65em;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* progress bar */
+        .progress-row {
+            margin-bottom: 0.8em;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            color: var(--muted);
+            margin-bottom: 0.3em;
+        }
+
+        .progress-label span:last-child { color: var(--amber); }
+
+        .progress-track {
+            height: 2px;
+            background: var(--card2);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--amber), var(--gold));
+            border-radius: 1px;
+            transition: width 1s ease;
+        }
+
+        /* sport */
+        .workout-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.3em;
+            margin-top: 0.5em;
+        }
+
+        .day-dot {
+            aspect-ratio: 1;
+            border-radius: 2px;
+            background: var(--card2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.5em;
+            color: var(--muted);
+        }
+
+        .day-dot.done { background: rgba(122,154,100,0.3); color: var(--green); border: 1px solid rgba(122,154,100,0.4); }
+        .day-dot.today-dot { border: 1px solid var(--amber); color: var(--amber); }
+        .day-dot.rest { background: rgba(74,64,48,0.3); }
+
+        .sport-next {
+            margin-top: 1em;
+            background: rgba(122,154,100,0.08);
+            border: 1px solid rgba(122,154,100,0.2);
+            border-radius: 2px;
+            padding: 0.6em 0.8em;
+            font-size: 0.78em;
+            color: var(--green);
+        }
+
+        /* vision footer */
+        .vision-strip {
+            grid-column: 1 / -1;
+            border: 1px solid rgba(212,146,74,0.15);
+            background: linear-gradient(135deg, rgba(30,20,8,0.8), rgba(12,10,8,0.9));
+            border-radius: 2px;
+            padding: 1.5em 2em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2em;
+        }
+
+        .vision-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1em;
+            color: var(--amber);
+            opacity: 0.7;
+            min-width: 8em;
+        }
+
+        .vision-goals {
+            display: flex;
+            gap: 2em;
+            flex: 1;
+        }
+
+        .vision-goal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3em;
+            text-align: center;
+        }
+
+        .vision-goal .vg-icon {
+            font-size: 1.2em;
+            opacity: 0.7;
+        }
+
+        .vision-goal .vg-text {
+            font-size: 0.68em;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* scrollbar global */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: var(--dim); }
+
+        /* notification banner */
+        .notif {
+            background: rgba(212,146,74,0.08);
+            border-bottom: 1px solid rgba(212,146,74,0.15);
+            padding: 0.6em 2.5em;
+            font-size: 0.75em;
+            color: var(--amber);
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+        }
+
+        .notif-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+
+        /* section divider label */
+        .section-label {
+            grid-column: 1 / -1;
+            font-size: 0.62em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--dim);
+            padding: 0.5em 0 0;
+            border-top: 1px solid #1e1810;
+        }
+
+        /* highlight badge */
+        .badge {
+            display: inline-block;
+            background: rgba(212,146,74,0.12);
+            border: 1px solid rgba(212,146,74,0.25);
+            color: var(--amber);
+            font-size: 0.65em;
+            letter-spacing: 0.08em;
+            padding: 0.1em 0.5em;
+            border-radius: 1px;
+            margin-left: 0.5em;
+            vertical-align: middle;
+        }
+
+        .badge.green { background: rgba(122,154,100,0.12); border-color: rgba(122,154,100,0.25); color: var(--green); }
+    </style>
+</head>
+
+<body>
+
+    <!-- notification banner -->
+    <div class="notif">
+        <div class="notif-dot"></div>
+        Täna: SEB Pärnu kontorisse 10:00 · Madridi lennuni jäänud 8 päeva ✈️
+    </div>
+
+    <!-- top header -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Tere, <span>Triinu</span></h1>
+            <p><span class="status-dot"></span>Assistent aktiivne</p>
+        </div>
+        <div class="topbar-right">
+            <div class="live-time" id="clock">--:--</div>
+            <div class="live-date" id="dateDisplay">28. mai 2026 · kolmapäev</div>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- TODAY - full width -->
+        <div class="card today">
+            <div class="card-label">Täna · 28. mai 2026</div>
+            <div class="today-inner">
+                <div class="today-greeting">
+                    <div class="greeting-text" id="greeting">Tere hommikust.</div>
+                    <div class="date-big">Kolmapäev, 28. mai 2026</div>
+                    <div class="madrid-countdown">
+                        <strong id="countdown">8</strong>
+                        päeva Madridi lennuni ✈️
+                    </div>
+                </div>
+                <div class="events-list">
+                    <div class="event-item">
+                        <div class="event-time">10:00</div>
+                        <div class="event-bar"></div>
+                        <div class="event-content">
+                            <div class="event-title">Pärnu SEB kontorisse <span class="event-tag tag-seb">SEB</span></div>
+                            <div class="event-sub">kuni 11:15</div>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-time">11:30</div>
+                        <div class="event-bar"></div>
+                        <div class="event-content">
+                            <div class="event-title">Pruun kleit + valge kasukas <span class="event-tag tag-isik">Isiklik</span></div>
+                            <div class="event-sub">Pärnus · kuni 12:30</div>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-time">12:45</div>
+                        <div class="event-bar"></div>
+                        <div class="event-content">
+                            <div class="event-title">Asjad Madridi jaoks kaasa <span class="event-tag tag-reisi">Reis</span></div>
+                            <div class="event-sub">kuni 13:45 · pakki targalt — stiilselt!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPCOMING TIMELINE -->
+        <div class="card timeline">
+            <div class="card-label">Lähiajal</div>
+            <div class="timeline-scroll">
+                <div class="tl-item">
+                    <div class="tl-date">5. juuni</div>
+                    <div class="tl-dot filled"></div>
+                    <div class="tl-event">✈️ Lend Londonisse<br>→ Madrid</div>
+                    <div class="tl-sub">11:00–12:15</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">5–9. juuni</div>
+                    <div class="tl-dot filled"></div>
+                    <div class="tl-event">🇪🇸 Madrid</div>
+                    <div class="tl-sub">Apartamento Moratalaz</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">9. juuni</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">✈️ Lend tagasi Eestisse</div>
+                    <div class="tl-sub">06:00–14:50</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">11–13. juuni</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">🏗️ Asuta ettevõte</div>
+                    <div class="tl-sub">+ telli materjale</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">15. juuni</div>
+                    <div class="tl-dot green-dot filled"></div>
+                    <div class="tl-event">🏦 SEB praktika algab</div>
+                    <div class="tl-sub">Youth LAB 2026</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">16. juuni</div>
+                    <div class="tl-dot green-dot"></div>
+                    <div class="tl-event">🎉 Youth LAB avaüritus</div>
+                    <div class="tl-sub">12:30 · Tornimäe 2</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">15–17. juuli</div>
+                    <div class="tl-dot green-dot"></div>
+                    <div class="tl-event">💡 SEB Häkaton</div>
+                    <div class="tl-sub">Youth LAB</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">26–28. juuni</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-event">🏃 Suvemängud</div>
+                    <div class="tl-sub"> </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-date">19. august</div>
+                    <div class="tl-dot green-dot"></div>
+                    <div class="tl-event">🎓 Youth LAB lõpuüritus</div>
+                    <div class="tl-sub">SEB</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- section label -->
+        <div class="section-label">Elualad</div>
+
+        <!-- SEB -->
+        <div class="card seb">
+            <div class="area-header">
+                <div class="area-icon icon-seb">🏦</div>
+                <div class="area-title">SEB Praktika</div>
+                <div class="area-status">Youth LAB 2026</div>
+            </div>
+            <div class="task-list">
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check done"></div>
+                    <div class="task-text done-text">Pärnu SEB kontor (täna 10:00)</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Täida Youth LAB küsimustik <span class="badge">tähtaeg möödas</span></div>
+                    <div class="task-date">oli 25. mai</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Kinnita osalemine avaüritusel (aktsepteeri kutse)</div>
+                    <div class="task-date">16. juuni</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Praktikaks valmistumine — küsi meeskonnast</div>
+                    <div class="task-date">enne 15. juunit</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Häkatoni ettevalmistus</div>
+                    <div class="task-date">15–17. juuli</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FIRMA -->
+        <div class="card firma">
+            <div class="area-header">
+                <div class="area-icon icon-firma">🧵</div>
+                <div class="area-title">Leather Bag Charm</div>
+                <div class="area-status">Loomisel</div>
+            </div>
+            <div class="task-list">
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Asuta ettevõte <span class="badge">11–13. juuni</span></div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Telli helkurmaterjal + metallrõngad</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Paki turundusagenda kokku</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Esimene Instagram postitus üles</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Hinnakujundus ja müügikanal</div>
+                </div>
+            </div>
+            <div class="mini-metrics">
+                <div class="mini-metric">
+                    <div class="val">~1,90€</div>
+                    <div class="lbl">omahind/tk</div>
+                </div>
+                <div class="mini-metric">
+                    <div class="val">4</div>
+                    <div class="lbl">värvivalikut</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPORT -->
+        <div class="card green">
+            <div class="area-header">
+                <div class="area-icon icon-sport">🏃</div>
+                <div class="area-title">Sport</div>
+                <div class="area-status">Juuni plaan</div>
+            </div>
+            <div class="card-label">Mai viimane nädal</div>
+            <div class="workout-grid">
+                <div class="day-dot done">E</div>
+                <div class="day-dot done">T</div>
+                <div class="day-dot rest">K</div>
+                <div class="day-dot done">N</div>
+                <div class="day-dot done">R</div>
+                <div class="day-dot rest">L</div>
+                <div class="day-dot today-dot">P</div>
+            </div>
+            <div class="sport-next">
+                🏊 Suvemängud · 26–28. juuni
+            </div>
+            <div class="task-list" style="margin-top:1em">
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Suvemängudeks treenimine</div>
+                </div>
+                <div class="task-item" onclick="toggleTask(this)">
+                    <div class="task-check"></div>
+                    <div class="task-text">Madridi jaoks aktiivne puhkus 🌊</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BAKATÖÖ -->
+        <div class="card" style="grid-column: 1 / span 2">
+            <div class="area-header">
+                <div class="area-icon icon-baka">📝</div>
+                <div class="area-title">Bakalaureusetöö · TalTech</div>
+                <div class="area-status">Käimas</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5em">
+                <div>
+                    <div class="card-label" style="margin-bottom:0.8em">Ülesanded</div>
+                    <div class="task-list">
+                        <div class="task-item" onclick="toggleTask(this)">
+                            <div class="task-check"></div>
+                            <div class="task-text">Võta juhendajaga ühendust <span class="badge">asap</span></div>
+                        </div>
+                        <div class="task-item" onclick="toggleTask(this)">
+                            <div class="task-check"></div>
+                            <div class="task-text">Täpsusta teema ja maht</div>
+                        </div>
+                        <div class="task-item" onclick="toggleTask(this)">
+                            <div class="task-check"></div>
+                            <div class="task-text">Koosta esialgne struktuur</div>
+                        </div>
+                        <div class="task-item" onclick="toggleTask(this)">
+                            <div class="task-check"></div>
+                            <div class="task-text">Alusta kirjanduse kogumist</div>
+                        </div>
+                        <div class="task-item" onclick="toggleTask(this)">
+                            <div class="task-check"></div>
+                            <div class="task-text">Esimene projekt juhendajale</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="card-label" style="margin-bottom:0.8em">Edusamm</div>
+                    <div class="progress-row">
+                        <div class="progress-label"><span>Sissejuhatus</span><span>0%</span></div>
+                        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="progress-label"><span>Teoreetiline osa</span><span>0%</span></div>
+                        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="progress-label"><span>Empiiriline osa</span><span>0%</span></div>
+                        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="progress-label"><span>Kokkuvõte</span><span>0%</span></div>
+                        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div style="font-size:0.72em; color:var(--muted); margin-top:1em">
+                        Uuenda progressi klikkides ülaltoodud ribadele.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISION STRIP -->
+        <div class="vision-strip">
+            <div class="vision-title">Vaade ↗</div>
+            <div class="vision-goals">
+                <div class="vision-goal">
+                    <div class="vg-icon">✈️</div>
+                    <div class="vg-text">Reisimine</div>
+                </div>
+                <div class="vision-goal">
+                    <div class="vg-icon">🌊</div>
+                    <div class="vg-text">Rannaelu</div>
+                </div>
+                <div class="vision-goal">
+                    <div class="vg-icon">🧵</div>
+                    <div class="vg-text">Oma firma</div>
+                </div>
+                <div class="vision-goal">
+                    <div class="vg-icon">🎓</div>
+                    <div class="vg-text">TalTech lõpetamine</div>
+                </div>
+                <div class="vision-goal">
+                    <div class="vg-icon">🏦</div>
+                    <div class="vg-text">SEB karjäär</div>
+                </div>
+                <div class="vision-goal">
+                    <div class="vg-icon">🏆</div>
+                    <div class="vg-text">Sport</div>
+                </div>
+                <div class="vision-goal">
+                    <div class="vg-icon">🌆</div>
+                    <div class="vg-text">Linn & stiil</div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main -->
+
+    <script>
+        // live clock
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2,'0');
+            const m = String(now.getMinutes()).padStart(2,'0');
+            document.getElementById('clock').textContent = h + ':' + m;
+
+            const days = ['pühapäev','esmaspäev','teisipäev','kolmapäev','neljapäev','reede','laupäev'];
+            const months = ['jaanuar','veebruar','märts','aprill','mai','juuni','juuli','august','september','oktoober','november','detsember'];
+            const d = now.getDate();
+            const mo = months[now.getMonth()];
+            const day = days[now.getDay()];
+            document.getElementById('dateDisplay').textContent = d + '. ' + mo + ' ' + now.getFullYear() + ' · ' + day;
+        }
+
+        // greeting by time
+        function updateGreeting() {
+            const h = new Date().getHours();
+            let txt = 'Tere!';
+            if (h >= 5 && h < 12) txt = 'Tere hommikust.';
+            else if (h >= 12 && h < 17) txt = 'Tere päevast.';
+            else if (h >= 17 && h < 22) txt = 'Tere õhtust.';
+            else txt = 'Hea öö, Triinu.';
+            document.getElementById('greeting').textContent = txt;
+        }
+
+        // countdown to Madrid (June 5, 2026)
+        function updateCountdown() {
+            const now = new Date();
+            const madrid = new Date('2026-06-05T11:00:00+03:00');
+            const diff = madrid - now;
+            const days = Math.max(0, Math.ceil(diff / (1000*60*60*24)));
+            document.getElementById('countdown').textContent = days;
+        }
+
+        // task toggle
+        function toggleTask(item) {
+            const check = item.querySelector('.task-check');
+            const text = item.querySelector('.task-text');
+            check.classList.toggle('done');
+            text.classList.toggle('done-text');
+        }
+
+        updateClock();
+        updateGreeting();
+        updateCountdown();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
