@@ -798,9 +798,219 @@
         </p>
     </section>
 
+    <!-- WOOCOMMERCE SECTION -->
+    <section id="woocommerce">
+        <div class="section-header">
+            <div class="section-num">06</div>
+            <div class="section-title">WooCommerce — e-pood + Eesti pakendifirmad</div>
+            <div class="section-badge">Triinu soovitas ★</div>
+        </div>
+
+        <p style="font-size:0.8em; color:rgba(160,120,70,0.5); margin-bottom:2em; line-height:1.8;">
+            WooCommerce (WordPressi peal) on Shopifyst odavam ja annab täieliku kontrolli.
+            Eesti pakendifirmadega saab ühendada REST API kaudu — tellimus tuleb poest automaatselt edasi.
+        </p>
+
+        <!-- SAMMUD -->
+        <div style="display:flex; flex-direction:column; gap:0.6em; margin-bottom:2.5em;">
+
+            <div class="task-card">
+                <div class="task-card-header" onclick="toggle(this)" style="cursor:pointer;">
+                    <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                    <div style="font-size:0.55em;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,120,50,0.35);min-width:4em;">Samm 1</div>
+                    <div class="task-name">Domeen + hosting — Veebimajutus.ee</div>
+                    <div class="task-meta" style="margin-left:auto;">~5€/kuu</div>
+                </div>
+                <div class="task-detail">
+                    <p>Registreeri domeen (nt <strong>helk.ee</strong> või sinu brändinimi) Veebimajutus.ee kaudu — odavaim Eesti hostingufirma, WordPress ühe klikiga.</p>
+                    <p style="margin-top:0.6em;">
+                        ↗ <a href="#" style="color:rgba(220,140,60,0.7);text-decoration:none;" onclick="return false;">veebimajutus.ee</a> · domeen ~2€/aastas · WordPress hosting alates 3,90€/kuu
+                    </p>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-card-header" onclick="toggle(this)" style="cursor:pointer;">
+                    <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                    <div style="font-size:0.55em;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,120,50,0.35);min-width:4em;">Samm 2</div>
+                    <div class="task-name">WooCommerce plugin + Eesti maksed</div>
+                    <div class="task-meta" style="margin-left:auto;">tasuta + ~20€/aasta</div>
+                </div>
+                <div class="task-detail">
+                    <p>WooCommerce plugin on <strong>tasuta</strong>. Eesti makselahendus: <strong>Montonio</strong> (pangalingid, kaardimaksed, järelmaks) — sobib kõige paremini Eesti turule.</p>
+                    <p style="margin-top:0.6em;">Alternatiiv: Maksekeskus.ee — samuti Eesti pangad + Visa/MC.</p>
+                    <p style="margin-top:0.6em;">↗ montonio.com · ↗ maksekeskus.ee</p>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-card-header" onclick="toggle(this)" style="cursor:pointer;">
+                    <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                    <div style="font-size:0.55em;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,120,50,0.35);min-width:4em;">Samm 3</div>
+                    <div class="task-name">Eesti pakendifirmade API ühendus</div>
+                    <div class="task-meta" style="margin-left:auto;">tasuta seadistada</div>
+                </div>
+                <div class="task-detail">
+                    <p>WooCommerce REST API saadab iga uue tellimuse automaatselt edasi. Eesti pakendifirmad:</p>
+                    <table style="width:100%; border-collapse:collapse; font-size:0.85em; margin-top:1em;">
+                        <tr style="border-bottom:1px solid rgba(220,140,50,0.08);">
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,80,0.6); width:40%;">Firma</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,80,0.6);">Toode</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,80,0.6);">Ühendus</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(220,140,50,0.05);">
+                            <td style="padding:0.6em 0.8em; color:#e8d4b0;">Pakendikeskus OÜ</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">Väiksed karbid, kotid</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">E-post / REST API</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(220,140,50,0.05);">
+                            <td style="padding:0.6em 0.8em; color:#e8d4b0;">Smurfit Kappa Eesti</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">Lainepappkarbid, trükk</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">B2B portaal</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(220,140,50,0.05);">
+                            <td style="padding:0.6em 0.8em; color:#e8d4b0;">DPD Eesti / Omniva</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">Saatmine + pakiautomaadid</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">WooCommerce plugin olemas</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6em 0.8em; color:#e8d4b0;">Itella SmartPOST</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">Pakiautomaadid EE/LV/LT/FI</td>
+                            <td style="padding:0.6em 0.8em; color:rgba(180,140,90,0.5);">WooCommerce plugin olemas</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top:1em; font-size:0.85em; color:rgba(140,100,50,0.5);">
+                        DPD ja Omniva WooCommerce pluginid on tasuta ja seadistatavad ilma programmeerimiseta.
+                        Pakendifirmadega (Pakendikeskus) võtad ühendust otse — nad saadavad sulle hinnakatalogi ja minimaalse tellimuse info.
+                    </p>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-card-header" onclick="toggle(this)" style="cursor:pointer;">
+                    <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                    <div style="font-size:0.55em;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,120,50,0.35);min-width:4em;">Samm 4</div>
+                    <div class="task-name">e-arved automaatselt — Merit Aktiva / Directo</div>
+                    <div class="task-meta" style="margin-left:auto;">~15–30€/kuu</div>
+                </div>
+                <div class="task-detail">
+                    <p><strong>Merit Aktiva</strong> on odavaim Eesti raamatupidamistarkvara OÜ-le — WooCommerce integratsioon olemas, arved lähevad automaatselt.</p>
+                    <p style="margin-top:0.6em;">↗ merit.ee · alates 0€/kuu (kuni 10 arvet) · seejärel ~15€/kuu</p>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-card-header" onclick="toggle(this)" style="cursor:pointer;">
+                    <div class="task-status" onclick="toggleStatus(event,this)"></div>
+                    <div style="font-size:0.55em;letter-spacing:0.2em;text-transform:uppercase;color:rgba(180,120,50,0.35);min-width:4em;">Samm 5</div>
+                    <div class="task-name">Instagram Shop ühendus WooCommerce'iga</div>
+                    <div class="task-meta" style="margin-left:auto;">tasuta</div>
+                </div>
+                <div class="task-detail">
+                    <p>Meta Commerce Manager → ühenda WooCommerce kataloogiga → Instagram Stories ja Posts saavad "Osta" nupu otse postitusele.</p>
+                    <p style="margin-top:0.6em;">Vajalik: Eesti ärikonto Facebookis + OÜ registreeritud.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- KULUD -->
+        <table style="width:100%; border-collapse:collapse; font-size:0.82em;">
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.08);">
+                <td style="padding:0.7em 0.8em; color:rgba(160,120,70,0.4); font-size:0.85em; letter-spacing:0.1em; text-transform:uppercase;">Komponent</td>
+                <td style="padding:0.7em 0.8em; color:rgba(160,120,70,0.4); font-size:0.85em; letter-spacing:0.1em; text-transform:uppercase; text-align:right;">Kulu</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.04);">
+                <td style="padding:0.7em 0.8em; color:#e8d4b0;">Domeen (.ee)</td>
+                <td style="padding:0.7em 0.8em; color:rgba(220,140,60,0.8); text-align:right;">~2€/aastas</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.04);">
+                <td style="padding:0.7em 0.8em; color:#e8d4b0;">WordPress hosting</td>
+                <td style="padding:0.7em 0.8em; color:rgba(220,140,60,0.8); text-align:right;">~3,90–6€/kuu</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.04);">
+                <td style="padding:0.7em 0.8em; color:#e8d4b0;">WooCommerce</td>
+                <td style="padding:0.7em 0.8em; color:rgba(220,140,60,0.8); text-align:right;">Tasuta</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.04);">
+                <td style="padding:0.7em 0.8em; color:#e8d4b0;">Montonio maksed</td>
+                <td style="padding:0.7em 0.8em; color:rgba(220,140,60,0.8); text-align:right;">0% setup + % tehingust</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.04);">
+                <td style="padding:0.7em 0.8em; color:#e8d4b0;">DPD/Omniva plugin</td>
+                <td style="padding:0.7em 0.8em; color:rgba(220,140,60,0.8); text-align:right;">Tasuta</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(220,140,50,0.04);">
+                <td style="padding:0.7em 0.8em; color:#e8d4b0;">Merit Aktiva</td>
+                <td style="padding:0.7em 0.8em; color:rgba(220,140,60,0.8); text-align:right;">0–15€/kuu</td>
+            </tr>
+            <tr style="border-top:1px solid rgba(220,140,50,0.15);">
+                <td style="padding:0.9em 0.8em; color:#f0dfc0; font-family:'Playfair Display',serif; font-weight:300;">Kokku kuus</td>
+                <td style="padding:0.9em 0.8em; color:rgba(220,140,60,0.95); text-align:right; font-family:'Playfair Display',serif; font-size:1.2em;">~20–25€/kuu</td>
+            </tr>
+        </table>
+
+    </section>
+
+    <!-- BRAND NAME SECTION -->
+    <section id="brandnimi">
+        <div class="section-header">
+            <div class="section-num">07</div>
+            <div class="section-title">Brändi nimi — alternatiivid "Ripatsile"</div>
+            <div class="section-badge">Triinu soovitas ★</div>
+        </div>
+        <p style="font-size:0.8em; color:rgba(160,120,70,0.5); margin-bottom:1.5em; line-height:1.7;">
+            Ripats kirjeldab toodet liiga otseselt — luksuskaubamärgil peaks nimi tekitama tunde, mitte nimetama funktsiooni.<br>
+            Klõpsa nimele, et näha seda logona.
+        </p>
+        <div id="brandGrid" style="display:grid; grid-template-columns: repeat(3,1fr); gap:1em; margin-bottom:2em;">
+        </div>
+        <div id="brandPreview" style="display:none; background:rgba(12,8,2,0.8); border:1px solid rgba(220,140,50,0.15); padding:3em; text-align:center; margin-bottom:1.5em; transition:all 0.3s;">
+            <div id="previewName" style="font-family:'Playfair Display',serif; font-weight:300; font-size:clamp(3em,8vw,5.5em); color:#f0dfc0; letter-spacing:0.08em; margin-bottom:0.3em;"></div>
+            <div id="previewTagline" style="font-size:0.7em; letter-spacing:0.25em; text-transform:uppercase; color:rgba(200,140,60,0.5); margin-bottom:1.5em;"></div>
+            <div id="previewDesc" style="font-size:0.8em; color:rgba(160,120,70,0.5); max-width:400px; margin:0 auto; line-height:1.7;"></div>
+        </div>
+    </section>
+
 </div>
 
 <script>
+const brands = [
+    { name:'HELK', tagline:'Visible by design', desc:'Eesti sõna "helk" — glow, gleam, shimmer. Meenutab nii nahka kui helkurit. Lühike, kõlav, rahvusvaheliselt lausutav.', recommended:true },
+    { name:'KUMA', tagline:'Carry the light', desc:'Jaapani "kuma" = bear, aga ka kõlab nagu "glow" mõnes keeles. Eksootiline, meeldejääv, sobib luksussegmenti.', recommended:false },
+    { name:'LUMO', tagline:'Shine where it matters', desc:'Lühem "luminous" — valgust täis, elegantne. Toimib nii inglise kui eesti keeles. Lihtne hääldada.', recommended:false },
+    { name:'VILK', tagline:'A flash of elegance', desc:'Eesti sõna — "vilk" tähendab kiire sähvatust. Lühike, tugev, ainulaadne. Rahvusvaheliselt huvitav.', recommended:false },
+    { name:'SÄDE', tagline:'Every detail sparks', desc:'Eesti "säde" = spark, glimmer. Poeetiline, soe, naiselik ilma magusana kõlamata. Hea Instagrami-nimena.', recommended:false },
+    { name:'NOMA', tagline:'Crafted, not mass-made', desc:'Skandinaavialik kõla, tähendab mõnes keeles "nime" — identiteet, personaalsus. Puhas ja moodne.', recommended:false },
+];
+
+const grid = document.getElementById('brandGrid');
+const preview = document.getElementById('brandPreview');
+let active = null;
+
+brands.forEach((b, i) => {
+    const card = document.createElement('button');
+    card.style.cssText = 'background:rgba(12,8,2,0.7);border:1px solid rgba(80,55,20,0.2);padding:1.2em;text-align:left;cursor:pointer;transition:all 0.25s;color:inherit;font-family:inherit;';
+    card.innerHTML = `
+        <div style="font-family:'Playfair Display',serif;font-weight:300;font-size:1.4em;color:#f0dfc0;letter-spacing:0.06em;margin-bottom:0.2em;">${b.name}${b.recommended ? ' <span style="font-size:0.45em;letter-spacing:0.15em;text-transform:uppercase;color:rgba(220,140,60,0.7);vertical-align:middle;padding:0.15em 0.5em;border:1px solid rgba(220,140,60,0.3);">Soovituslik</span>' : ''}</div>
+        <div style="font-size:0.62em;letter-spacing:0.15em;text-transform:uppercase;color:rgba(160,110,50,0.4);">${b.tagline}</div>
+    `;
+    card.addEventListener('click', () => {
+        if (active === i) { active=null; preview.style.display='none'; card.style.borderColor='rgba(80,55,20,0.2)'; return; }
+        document.querySelectorAll('#brandGrid button').forEach(c => c.style.borderColor='rgba(80,55,20,0.2)');
+        card.style.borderColor='rgba(220,140,50,0.4)';
+        active = i;
+        document.getElementById('previewName').textContent = b.name;
+        document.getElementById('previewTagline').textContent = b.tagline;
+        document.getElementById('previewDesc').textContent = b.desc;
+        preview.style.display='block';
+        preview.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+    card.addEventListener('mouseenter', () => { if(active!==i) card.style.borderColor='rgba(220,140,50,0.2)'; });
+    card.addEventListener('mouseleave', () => { if(active!==i) card.style.borderColor='rgba(80,55,20,0.2)'; });
+    grid.appendChild(card);
+});
+
 function toggle(header) {
     const detail = header.nextElementSibling;
     if (detail && detail.classList.contains('task-detail')) {
