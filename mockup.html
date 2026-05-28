@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup · Ripats fotole</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #080604;
+            color: #e8d4b0;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: auto 1fr;
+        }
+
+        /* NAV */
+        .topnav {
+            grid-column: 1 / -1;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.9em 1.5em;
+            background: #0a0704;
+            border-bottom: 1px solid rgba(220,140,50,0.1);
+            font-size: 0.75em;
+        }
+        .topnav a { color: rgba(180,120,50,0.5); text-decoration: none; letter-spacing: 0.1em; font-size:0.9em; }
+        .topnav a:hover { color: rgba(220,140,60,0.8); }
+        .topnav-title { font-size: 1em; color: rgba(240,210,160,0.7); letter-spacing: 0.05em; }
+        .topnav-hint { color: rgba(140,100,40,0.4); font-size: 0.85em; }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: #0c0804;
+            border-right: 1px solid rgba(220,140,50,0.07);
+            padding: 1.5em;
+            overflow-y: auto;
+            display: flex; flex-direction: column; gap: 1.5em;
+        }
+
+        .panel-title {
+            font-size: 0.58em; letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(180,120,50,0.35); margin-bottom: 0.8em;
+        }
+
+        /* Upload */
+        .upload-zone {
+            border: 1px dashed rgba(220,140,50,0.2);
+            padding: 1.5em;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(20,14,4,0.5);
+        }
+        .upload-zone:hover { border-color: rgba(220,140,50,0.4); background: rgba(30,20,8,0.5); }
+        .upload-zone input { display: none; }
+        .upload-zone .upload-icon { font-size: 1.8em; margin-bottom: 0.4em; opacity: 0.5; }
+        .upload-zone p { font-size: 0.7em; color: rgba(180,130,60,0.5); line-height: 1.5; }
+
+        /* Charm controls */
+        .ctrl-group { margin-bottom: 1em; }
+
+        .ctrl-label {
+            font-size: 0.62em; letter-spacing: 0.12em; text-transform: uppercase;
+            color: rgba(160,110,50,0.4); margin-bottom: 0.5em; display: block;
+        }
+
+        input[type=range] {
+            width: 100%; accent-color: rgba(200,130,50,0.8);
+            background: transparent;
+        }
+
+        .ctrl-val {
+            font-size: 0.65em; color: rgba(180,130,60,0.5);
+            float: right; margin-top: -1.2em;
+        }
+
+        /* Colour picker row */
+        .color-row { display: flex; gap: 0.5em; flex-wrap: wrap; }
+
+        .color-btn {
+            width: 24px; height: 24px; border-radius: 50%;
+            border: 2px solid transparent; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .color-btn.active { border-color: rgba(220,140,50,0.8); }
+
+        /* Action buttons */
+        .btn {
+            display: block; width: 100%;
+            padding: 0.7em; margin-top: 0.5em;
+            background: rgba(220,140,50,0.1);
+            border: 1px solid rgba(220,140,50,0.2);
+            color: rgba(220,140,60,0.8);
+            font-size: 0.7em; letter-spacing: 0.12em; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s; font-family: inherit;
+        }
+        .btn:hover { background: rgba(220,140,50,0.2); }
+        .btn.primary {
+            background: rgba(220,140,50,0.18);
+            border-color: rgba(220,140,50,0.4);
+            color: rgba(240,180,80,0.95);
+        }
+
+        .tip {
+            font-size: 0.65em; color: rgba(140,100,40,0.4); line-height: 1.6;
+            border-top: 1px solid rgba(80,50,15,0.2); padding-top: 1em;
+        }
+
+        /* CANVAS AREA */
+        .canvas-area {
+            position: relative;
+            overflow: hidden;
+            background: #060402;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #photoCanvas {
+            max-width: 100%; max-height: 100%;
+            display: block;
+            cursor: crosshair;
+        }
+
+        .charm-overlay {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+            transform-origin: top center;
+        }
+        .charm-overlay:active { cursor: grabbing; }
+
+        .empty-state {
+            text-align: center; opacity: 0.35;
+        }
+        .empty-state .es-icon { font-size: 3em; margin-bottom: 0.5em; }
+        .empty-state p { font-size: 0.75em; letter-spacing: 0.05em; line-height: 1.7; }
+
+        /* Charm SVG colours */
+        .charm-leather { fill: #1a1008; }
+        .charm-leather.caramel { fill: #7a4a20; }
+        .charm-leather.dark-brown { fill: #2a1808; }
+        .charm-leather.beige { fill: #c8a878; }
+
+        .charm-reflector { fill: #c8c8c8; }
+        .charm-ring { fill: none; stroke: #888880; stroke-width: 2.5; }
+        .charm-strap { fill: #1a1008; }
+        .charm-strap.caramel { fill: #7a4a20; }
+        .charm-strap.dark-brown { fill: #2a1808; }
+        .charm-strap.beige { fill: #c8a878; }
+        .charm-stitch { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 0.8; stroke-dasharray: 3,2; }
+
+        /* Screenshot tip */
+        .screenshot-tip {
+            position: fixed; bottom: 1em; right: 1em;
+            background: rgba(20,14,4,0.95);
+            border: 1px solid rgba(220,140,50,0.2);
+            padding: 0.8em 1.2em;
+            font-size: 0.65em;
+            color: rgba(200,160,80,0.7);
+            letter-spacing: 0.05em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+    <a href="hub.html">← Tagasi</a>
+    <div class="topnav-title">Mockup · Ripats fotole</div>
+    <div class="topnav-hint">Laadi foto üles → lohista ripats kohale → screenshot</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div>
+        <div class="panel-title">01 · Foto</div>
+        <label class="upload-zone" id="uploadZone">
+            <input type="file" id="photoInput" accept="image/*">
+            <div class="upload-icon">📷</div>
+            <p>Kliki ja laadi foto üles<br>(sashafvt must mantel, rand, kohvik LV)</p>
+        </label>
+    </div>
+
+    <div>
+        <div class="panel-title">02 · Ripats — nahavärv</div>
+        <div class="color-row">
+            <div class="color-btn active" style="background:#1a1008" title="Must" onclick="setColor('black',this)"></div>
+            <div class="color-btn" style="background:#2a1808" title="Tumepruun" onclick="setColor('dark-brown',this)"></div>
+            <div class="color-btn" style="background:#7a4a20" title="Karamell" onclick="setColor('caramel',this)"></div>
+            <div class="color-btn" style="background:#c8a878" title="Beež" onclick="setColor('beige',this)"></div>
+        </div>
+    </div>
+
+    <div>
+        <div class="panel-title">03 · Suurus</div>
+        <div class="ctrl-group">
+            <span class="ctrl-label">Suurus</span>
+            <input type="range" id="sizeRange" min="40" max="200" value="90" oninput="updateSize()">
+            <span class="ctrl-val" id="sizeVal">90</span>
+        </div>
+        <div class="ctrl-group">
+            <span class="ctrl-label">Pööramine</span>
+            <input type="range" id="rotRange" min="-45" max="45" value="0" oninput="updateRot()">
+            <span class="ctrl-val" id="rotVal">0°</span>
+        </div>
+        <div class="ctrl-group">
+            <span class="ctrl-label">Läbipaistvus</span>
+            <input type="range" id="opacRange" min="30" max="100" value="95" oninput="updateOpac()">
+            <span class="ctrl-val" id="opacVal">95%</span>
+        </div>
+    </div>
+
+    <div>
+        <div class="panel-title">04 · Asukoht</div>
+        <button class="btn" onclick="snapPreset('bag')">→ Koti sangale</button>
+        <button class="btn" onclick="snapPreset('coat')">→ Mantlile</button>
+        <button class="btn" onclick="snapPreset('center')">→ Keskele</button>
+    </div>
+
+    <div>
+        <button class="btn primary" onclick="downloadMockup()">⬇ Salvesta mockup</button>
+        <button class="btn" onclick="resetCharm()">↺ Lähtesta</button>
+    </div>
+
+    <div class="tip">
+        <strong style="color:rgba(200,150,60,0.6)">Vihje:</strong><br>
+        Lohista ripats otse fotol kohale.
+        Parima tulemuse saad kui foto on vertikaalne (portrait).
+        Salvesta nupp loob PNG faili.
+    </div>
+
+</div>
+
+<!-- CANVAS AREA -->
+<div class="canvas-area" id="canvasArea">
+    <div class="empty-state" id="emptyState">
+        <div class="es-icon">🖼</div>
+        <p>Laadi foto üles vasakult<br>Must mantel · Rand · Kohvik LV</p>
+    </div>
+
+    <img id="bgPhoto" style="display:none; max-width:100%; max-height:100%; position:absolute;" />
+
+    <!-- Draggable charm -->
+    <div class="charm-overlay" id="charmOverlay" style="display:none; left:50%; top:40%">
+        <svg id="charmSvg" viewBox="0 0 60 130" width="90">
+            <!-- Ring -->
+            <ellipse cx="30" cy="10" rx="10" ry="10" class="charm-ring" id="svgRing"/>
+            <!-- Strap -->
+            <rect x="27" y="10" width="6" height="28" rx="2" class="charm-strap" id="svgStrap"/>
+            <!-- Body background -->
+            <rect x="8" y="38" width="44" height="68" rx="3" class="charm-leather" id="svgBody"/>
+            <!-- Reflector panel -->
+            <rect x="14" y="46" width="32" height="52" rx="2" class="charm-reflector" id="svgReflector">
+                <animate attributeName="opacity" values="0.75;1;0.75" dur="3s" repeatCount="indefinite"/>
+            </rect>
+            <!-- Reflector shine -->
+            <rect x="14" y="46" width="32" height="10" rx="2" fill="rgba(255,255,255,0.3)"/>
+            <!-- Stitching -->
+            <rect x="10" y="40" width="40" height="64" rx="2" class="charm-stitch" id="svgStitch"/>
+        </svg>
+    </div>
+</div>
+
+<div class="screenshot-tip" id="screenshotTip">
+    Mockup salvestatud! Vaata allalaadimisi. 📁
+</div>
+
+<script>
+let currentColor = 'black';
+let isDragging = false;
+let dragOffX = 0, dragOffY = 0;
+let charmX = 0, charmY = 0;
+
+const charm = document.getElementById('charmOverlay');
+const bgPhoto = document.getElementById('bgPhoto');
+const emptyState = document.getElementById('emptyState');
+const area = document.getElementById('canvasArea');
+
+// Upload photo
+document.getElementById('photoInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        bgPhoto.src = ev.target.result;
+        bgPhoto.style.display = 'block';
+        emptyState.style.display = 'none';
+        charm.style.display = 'block';
+
+        // Start charm in upper-center of image
+        bgPhoto.onload = () => {
+            const rect = bgPhoto.getBoundingClientRect();
+            const aRect = area.getBoundingClientRect();
+            charmX = aRect.width * 0.5 - 45;
+            charmY = aRect.height * 0.35;
+            setCharmPos();
+        };
+    };
+    reader.readAsDataURL(file);
+});
+
+// Drag logic
+charm.addEventListener('mousedown', startDrag);
+charm.addEventListener('touchstart', startDragTouch, {passive:true});
+
+function startDrag(e) {
+    e.preventDefault();
+    isDragging = true;
+    const rect = charm.getBoundingClientRect();
+    dragOffX = e.clientX - rect.left;
+    dragOffY = e.clientY - rect.top;
+    charm.style.cursor = 'grabbing';
+}
+
+function startDragTouch(e) {
+    isDragging = true;
+    const touch = e.touches[0];
+    const rect = charm.getBoundingClientRect();
+    dragOffX = touch.clientX - rect.left;
+    dragOffY = touch.clientY - rect.top;
+}
+
+document.addEventListener('mousemove', onDrag);
+document.addEventListener('touchmove', onDragTouch, {passive:false});
+document.addEventListener('mouseup', () => { isDragging = false; charm.style.cursor = 'grab'; });
+document.addEventListener('touchend', () => { isDragging = false; });
+
+function onDrag(e) {
+    if (!isDragging) return;
+    const aRect = area.getBoundingClientRect();
+    charmX = e.clientX - aRect.left - dragOffX;
+    charmY = e.clientY - aRect.top - dragOffY;
+    setCharmPos();
+}
+
+function onDragTouch(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const aRect = area.getBoundingClientRect();
+    charmX = touch.clientX - aRect.left - dragOffX;
+    charmY = touch.clientY - aRect.top - dragOffY;
+    setCharmPos();
+}
+
+function setCharmPos() {
+    charm.style.left = charmX + 'px';
+    charm.style.top = charmY + 'px';
+    charm.style.transform = `rotate(${document.getElementById('rotRange').value}deg)`;
+}
+
+// Color
+function setColor(color, btn) {
+    currentColor = color;
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateCharmColor();
+}
+
+function updateCharmColor() {
+    const map = {
+        'black':      { body: '#1a1008', strap: '#1a1008' },
+        'dark-brown': { body: '#2a1808', strap: '#2a1808' },
+        'caramel':    { body: '#7a4a20', strap: '#7a4a20' },
+        'beige':      { body: '#c8a878', strap: '#c8a878' }
+    };
+    const c = map[currentColor] || map['black'];
+    document.getElementById('svgBody').setAttribute('fill', c.body);
+    document.getElementById('svgStrap').setAttribute('fill', c.strap);
+}
+
+// Size
+function updateSize() {
+    const val = document.getElementById('sizeRange').value;
+    document.getElementById('sizeVal').textContent = val;
+    document.getElementById('charmSvg').setAttribute('width', val);
+}
+
+// Rotation
+function updateRot() {
+    const val = document.getElementById('rotRange').value;
+    document.getElementById('rotVal').textContent = val + '°';
+    charm.style.transform = `rotate(${val}deg)`;
+}
+
+// Opacity
+function updateOpac() {
+    const val = document.getElementById('opacRange').value;
+    document.getElementById('opacVal').textContent = val + '%';
+    charm.style.opacity = val / 100;
+}
+
+// Presets
+function snapPreset(pos) {
+    const aRect = area.getBoundingClientRect();
+    const pRect = bgPhoto.getBoundingClientRect();
+    if (pos === 'bag') {
+        charmX = pRect.left - aRect.left + pRect.width * 0.35;
+        charmY = pRect.top - aRect.top + pRect.height * 0.25;
+    } else if (pos === 'coat') {
+        charmX = pRect.left - aRect.left + pRect.width * 0.45;
+        charmY = pRect.top - aRect.top + pRect.height * 0.30;
+    } else {
+        charmX = aRect.width / 2 - 45;
+        charmY = aRect.height / 2 - 65;
+    }
+    setCharmPos();
+}
+
+function resetCharm() {
+    const aRect = area.getBoundingClientRect();
+    charmX = aRect.width / 2 - 45;
+    charmY = aRect.height * 0.35;
+    document.getElementById('sizeRange').value = 90;
+    document.getElementById('rotRange').value = 0;
+    document.getElementById('opacRange').value = 95;
+    updateSize(); updateRot(); updateOpac();
+    setCharmPos();
+}
+
+// Download — draw both on canvas
+function downloadMockup() {
+    if (!bgPhoto.src || bgPhoto.style.display === 'none') {
+        alert('Laadi kõigepealt foto üles!');
+        return;
+    }
+
+    const canvas = document.createElement('canvas');
+    const img = bgPhoto;
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d');
+
+    // Draw background photo
+    ctx.drawImage(img, 0, 0);
+
+    // Calculate charm position relative to photo
+    const aRect = area.getBoundingClientRect();
+    const pRect = img.getBoundingClientRect();
+    const scaleX = img.naturalWidth / pRect.width;
+    const scaleY = img.naturalHeight / pRect.height;
+
+    const cx = (charmX - (pRect.left - aRect.left)) * scaleX;
+    const cy = (charmY - (pRect.top - aRect.top)) * scaleY;
+    const size = parseInt(document.getElementById('sizeRange').value);
+    const scaledW = size * scaleX;
+    const scaledH = size * 130 / 60 * scaleY;
+    const rot = parseInt(document.getElementById('rotRange').value) * Math.PI / 180;
+    const opac = parseInt(document.getElementById('opacRange').value) / 100;
+
+    // Draw charm on canvas
+    ctx.save();
+    ctx.globalAlpha = opac;
+    ctx.translate(cx + scaledW / 2, cy);
+    ctx.rotate(rot);
+
+    const colors = {
+        'black': '#1a1008', 'dark-brown': '#2a1808',
+        'caramel': '#7a4a20', 'beige': '#c8a878'
+    };
+    const leatherColor = colors[currentColor] || '#1a1008';
+    const W = scaledW, H = scaledH;
+    const hw = W / 2;
+
+    // Ring
+    ctx.strokeStyle = '#888880';
+    ctx.lineWidth = W * 0.04;
+    ctx.beginPath();
+    ctx.arc(0, W * 0.17, W * 0.17, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Strap
+    ctx.fillStyle = leatherColor;
+    ctx.fillRect(-W * 0.05, W * 0.17, W * 0.1, H * 0.22);
+
+    // Body
+    ctx.fillStyle = leatherColor;
+    roundRect(ctx, -hw, H * 0.28, W, H * 0.54, W * 0.05);
+    ctx.fill();
+
+    // Reflector
+    const refPad = W * 0.1;
+    const refX = -hw + refPad;
+    const refY = H * 0.33;
+    const refW = W - refPad * 2;
+    const refH = H * 0.42;
+
+    const grad = ctx.createLinearGradient(refX, refY, refX, refY + refH);
+    grad.addColorStop(0, '#e8e8e8');
+    grad.addColorStop(0.3, '#c8c8c8');
+    grad.addColorStop(1, '#a8a8a8');
+    ctx.fillStyle = grad;
+    roundRect(ctx, refX, refY, refW, refH, W * 0.03);
+    ctx.fill();
+
+    // Shine
+    const shineGrad = ctx.createLinearGradient(refX, refY, refX, refY + refH * 0.2);
+    shineGrad.addColorStop(0, 'rgba(255,255,255,0.45)');
+    shineGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = shineGrad;
+    roundRect(ctx, refX, refY, refW, refH * 0.2, W * 0.03);
+    ctx.fill();
+
+    // Stitching
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = W * 0.012;
+    ctx.setLineDash([W * 0.05, W * 0.04]);
+    roundRect(ctx, -hw + W * 0.04, H * 0.30, W - W * 0.08, H * 0.50, W * 0.04);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.restore();
+
+    // Export
+    const link = document.createElement('a');
+    link.download = 'mockup-ripats.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    document.getElementById('screenshotTip').style.display = 'block';
+    setTimeout(() => document.getElementById('screenshotTip').style.display = 'none', 3000);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+}
+</script>
+</body>
+</html>
