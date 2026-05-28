@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sõnumid · Triinu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body { height: 100%; overflow: hidden; }
+
+        body {
+            background: #060402;
+            color: #e8d4b0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+        }
+
+        /* glows */
+        body::before {
+            content: '';
+            position: fixed;
+            bottom: -20vh; right: -10vw;
+            width: 60vw; height: 60vh;
+            background: radial-gradient(ellipse, rgba(200,100,20,0.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── TOPBAR (full width) ── */
+        .topbar {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1em 2em;
+            border-bottom: 1px solid rgba(220,140,50,0.08);
+            background: rgba(6,4,2,0.95);
+            z-index: 10;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 2em;
+        }
+
+        .back-link {
+            font-size: 0.65em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(180,120,50,0.4);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: rgba(220,140,60,0.7); }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 300;
+            font-size: 1em;
+            color: rgba(240,220,180,0.8);
+            letter-spacing: 0.05em;
+        }
+
+        .topbar-right {
+            font-size: 0.65em;
+            color: rgba(160,120,60,0.4);
+            letter-spacing: 0.1em;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            border-right: 1px solid rgba(220,140,50,0.07);
+            background: rgba(8,5,2,0.9);
+            padding: 1.5em 0;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2em;
+        }
+
+        .sidebar-label {
+            font-size: 0.55em;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: rgba(160,110,40,0.35);
+            padding: 0 1.5em;
+            margin-bottom: 0.6em;
+        }
+
+        .thread {
+            padding: 0.9em 1.5em;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .thread:hover {
+            background: rgba(220,140,50,0.04);
+        }
+
+        .thread.active {
+            border-left-color: rgba(220,130,50,0.5);
+            background: rgba(220,140,50,0.06);
+        }
+
+        .thread-name {
+            font-size: 0.78em;
+            color: rgba(240,220,180,0.75);
+            margin-bottom: 0.25em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .thread-preview {
+            font-size: 0.65em;
+            color: rgba(160,130,80,0.45);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .thread-time {
+            font-size: 0.6em;
+            color: rgba(140,100,50,0.35);
+            flex-shrink: 0;
+            margin-left: 0.5em;
+        }
+
+        .unread-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: rgba(220,130,50,0.7);
+            display: inline-block;
+            margin-right: 0.3em;
+            flex-shrink: 0;
+        }
+
+        .new-thread-btn {
+            display: block;
+            margin: 0 1.5em 1.5em;
+            padding: 0.6em 1em;
+            border: 1px solid rgba(220,140,50,0.15);
+            background: transparent;
+            color: rgba(220,140,60,0.6);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: calc(100% - 3em);
+            text-align: center;
+        }
+
+        .new-thread-btn:hover {
+            background: rgba(220,140,50,0.08);
+            color: rgba(220,140,60,0.9);
+        }
+
+        /* ── MAIN CHAT AREA ── */
+        .chat-area {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            background: rgba(6,4,2,0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-header {
+            padding: 1.2em 2em;
+            border-bottom: 1px solid rgba(220,140,50,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 300;
+            font-size: 1em;
+            color: rgba(240,220,180,0.8);
+        }
+
+        .chat-header-sub {
+            font-size: 0.65em;
+            color: rgba(160,120,60,0.4);
+            margin-top: 0.15em;
+        }
+
+        .chat-header-tag {
+            font-size: 0.6em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.25em 0.7em;
+            border: 1px solid rgba(220,140,50,0.15);
+            color: rgba(200,130,50,0.5);
+        }
+
+        /* ── MESSAGES ── */
+        .messages {
+            overflow-y: auto;
+            padding: 2em;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5em;
+        }
+
+        .messages::-webkit-scrollbar { width: 2px; }
+        .messages::-webkit-scrollbar-thumb { background: rgba(140,100,40,0.3); }
+
+        .msg {
+            display: flex;
+            flex-direction: column;
+            max-width: 72%;
+        }
+
+        .msg.sent { align-self: flex-end; align-items: flex-end; }
+        .msg.received { align-self: flex-start; align-items: flex-start; }
+
+        .msg-sender {
+            font-size: 0.6em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(160,120,60,0.4);
+            margin-bottom: 0.4em;
+        }
+
+        .msg-bubble {
+            padding: 0.9em 1.2em;
+            font-size: 0.82em;
+            line-height: 1.65;
+        }
+
+        .msg.sent .msg-bubble {
+            background: rgba(220,140,50,0.1);
+            border: 1px solid rgba(220,140,50,0.15);
+            color: rgba(240,215,170,0.9);
+        }
+
+        .msg.received .msg-bubble {
+            background: rgba(20,15,8,0.8);
+            border: 1px solid rgba(80,60,30,0.25);
+            color: rgba(200,175,130,0.75);
+        }
+
+        .msg-time {
+            font-size: 0.58em;
+            color: rgba(140,100,50,0.3);
+            margin-top: 0.35em;
+            letter-spacing: 0.05em;
+        }
+
+        .msg-bubble strong {
+            color: rgba(220,170,80,0.9);
+            font-weight: 500;
+        }
+
+        /* draft — system message */
+        .system-msg {
+            align-self: center;
+            font-size: 0.65em;
+            color: rgba(140,100,50,0.35);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.4em 1em;
+            border-top: 1px solid rgba(100,70,30,0.15);
+            border-bottom: 1px solid rgba(100,70,30,0.15);
+        }
+
+        /* ── COMPOSE ── */
+        .compose {
+            padding: 1.2em 2em 1.5em;
+            border-top: 1px solid rgba(220,140,50,0.07);
+        }
+
+        .compose-inner {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.8em;
+            align-items: end;
+        }
+
+        .compose-box {
+            background: rgba(14,10,4,0.8);
+            border: 1px solid rgba(220,140,50,0.12);
+            color: rgba(240,215,170,0.85);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82em;
+            font-weight: 300;
+            padding: 0.9em 1.2em;
+            resize: none;
+            height: 60px;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .compose-box::placeholder {
+            color: rgba(160,120,60,0.3);
+        }
+
+        .compose-box:focus {
+            border-color: rgba(220,140,50,0.25);
+        }
+
+        .send-btn {
+            background: rgba(220,140,50,0.12);
+            border: 1px solid rgba(220,140,50,0.2);
+            color: rgba(220,140,60,0.7);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0 1.5em;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .send-btn:hover {
+            background: rgba(220,140,50,0.2);
+            color: rgba(220,160,80,0.95);
+        }
+
+        .compose-tags {
+            display: flex;
+            gap: 0.6em;
+            margin-bottom: 0.7em;
+        }
+
+        .compose-tag {
+            font-size: 0.6em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.2em 0.7em;
+            border: 1px solid rgba(100,70,30,0.2);
+            color: rgba(160,110,50,0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .compose-tag:hover, .compose-tag.active {
+            border-color: rgba(220,140,50,0.3);
+            color: rgba(220,140,60,0.7);
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="topbar-left">
+        <a href="hub.html" class="back-link">← Tagasi</a>
+        <div class="page-title">Sõnumid</div>
+    </div>
+    <div class="topbar-right" id="clock">--:--</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <button class="new-thread-btn" onclick="newDraft()">+ Uus sõnum</button>
+
+    <div class="sidebar-section">
+        <div class="sidebar-label">Pinned</div>
+
+        <div class="thread active" onclick="loadThread('jarvis')">
+            <div class="thread-name">
+                <span><span class="unread-dot"></span>JARVIS · Assistent</span>
+                <span class="thread-time">nüüd</span>
+            </div>
+            <div class="thread-preview">Täna on 3 sündmust. Madrid 8p...</div>
+        </div>
+
+        <div class="thread" onclick="loadThread('juhendaja')">
+            <div class="thread-name">
+                <span><span class="unread-dot"></span>Juhendaja · TalTech</span>
+                <span class="thread-time">—</span>
+            </div>
+            <div class="thread-preview">Kirjuta esimene kiri asap ⚡</div>
+        </div>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-label">Töö</div>
+
+        <div class="thread" onclick="loadThread('seb')">
+            <div class="thread-name">
+                SEB Youth LAB
+                <span class="thread-time">14. mai</span>
+            </div>
+            <div class="thread-preview">Avaüritus 16. juunil 12:30...</div>
+        </div>
+
+        <div class="thread" onclick="loadThread('firma')">
+            <div class="thread-name">
+                Leather Brand · Märkmed
+                <span class="thread-time">täna</span>
+            </div>
+            <div class="thread-preview">Asuta ettevõte 11.-13. juunil</div>
+        </div>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-label">Isiklik</div>
+
+        <div class="thread" onclick="loadThread('madrid')">
+            <div class="thread-name">
+                Madrid ✈️
+                <span class="thread-time">5. juuni</span>
+            </div>
+            <div class="thread-preview">Apartamento Moratalaz · pakk...</div>
+        </div>
+
+        <div class="thread" onclick="loadThread('notes')">
+            <div class="thread-name">
+                Mõtted & ideed
+                <span class="thread-time">täna</span>
+            </div>
+            <div class="thread-preview">Sinu privaatne märkmik...</div>
+        </div>
+    </div>
+</div>
+
+<!-- CHAT AREA -->
+<div class="chat-area">
+    <div class="chat-header">
+        <div>
+            <div class="chat-header-name" id="chatName">JARVIS · Assistent</div>
+            <div class="chat-header-sub" id="chatSub">Sinu isiklik süsteem · alati aktiivne</div>
+        </div>
+        <div class="chat-header-tag" id="chatTag">AI</div>
+    </div>
+
+    <div class="messages" id="messages">
+        <!-- loaded by JS -->
+    </div>
+
+    <div class="compose">
+        <div class="compose-tags">
+            <div class="compose-tag active" data-tag="isiklik">Isiklik</div>
+            <div class="compose-tag" data-tag="firma">Firma</div>
+            <div class="compose-tag" data-tag="seb">SEB</div>
+            <div class="compose-tag" data-tag="bakatoo">Bakatöö</div>
+        </div>
+        <div class="compose-inner">
+            <textarea class="compose-box" id="composeBox" placeholder="Kirjuta siia..."></textarea>
+            <button class="send-btn" onclick="sendMsg()">Saada →</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const threads = {
+    jarvis: {
+        name: 'JARVIS · Assistent',
+        sub: 'Sinu isiklik süsteem · alati aktiivne',
+        tag: 'AI',
+        messages: [
+            { type: 'received', sender: 'JARVIS', time: '28. mai · 03:00', text: 'Tere hommikust, Triinu. Täna on <strong>3 sündmust</strong>:<br>· 10:00 SEB Pärnu kontor<br>· 11:30 Pruun kleit + valge kasukas<br>· 12:45 Madridi pakkimine<br><br>Madridi lennuni jäänud <strong>8 päeva</strong>.' },
+            { type: 'received', sender: 'JARVIS', time: '28. mai · 03:01', text: 'Meeldetuletus: <strong>juhendajale</strong> pole kirjutatud. Tahan aidata sul see täna ära teha — vaja ainult öelda.' },
+            { type: 'received', sender: 'JARVIS', time: '28. mai · 03:01', text: 'Firma: <strong>asuta ettevõte 11.-13. juunil</strong> — jõuad Madridist 9. juunil tagasi, sul on 2 päeva. Vajalikud sammud on juba assistendi lehel kirjas.' },
+        ]
+    },
+    juhendaja: {
+        name: 'Juhendaja · TalTech',
+        sub: 'Bakalaureusetöö · Kirjuta esimene kiri',
+        tag: 'Bakatöö',
+        messages: [
+            { type: 'system', text: 'Kirja mustand — saada ära!' },
+            { type: 'sent', sender: 'Mina', time: 'mustand', text: 'Lugupeetud [Juhendaja nimi],<br><br>Minu nimi on Triinu Viitas, TalTech tudeng. Soovin teie käe all kirjutada oma bakalaureusetööd teemal [TEEMA].<br><br>Kas oleks võimalik kohtuda, et arutada töö suunda ja mahtu?<br><br>Lugupidamisega,<br>Triinu Viitas' },
+        ]
+    },
+    seb: {
+        name: 'SEB Youth LAB 2026',
+        sub: 'Praktika algab 15. juunil · Avaüritus 16. juunil',
+        tag: 'SEB',
+        messages: [
+            { type: 'received', sender: 'Liina Hindremäe · SEB', time: '14. mai', text: 'Tere! Meil on suur rõõm sind tervitada <strong>SEB Youth LAB 2026</strong> programmis!<br><br>📅 16. juuni — avaüritus 12:30–17:00<br>📍 Tornimäe 2, Tallinn (4. korrus)<br><br>Palun kinnita osalemine.' },
+            { type: 'system', text: 'Praktika algab 15. juunil' },
+            { type: 'received', sender: 'JARVIS', time: 'meeldetuletus', text: 'Kas oled Youth LAB küsimustiku täitnud? Tähtaeg oli 25. mai.' },
+        ]
+    },
+    firma: {
+        name: 'Leather Brand · Märkmed',
+        sub: 'Reflective Leather Bag Charm · Brand Studio',
+        tag: 'Firma',
+        messages: [
+            { type: 'sent', sender: 'Mina', time: '18. mai', text: 'Toode valmis. Omahind ~1.90€/tk.<br>Värvid: Must · Tumepruun · Karamell · Beež<br>EN 17353 sertifitseeritud helkurmaterjal.' },
+            { type: 'sent', sender: 'Mina', time: '18. mai', text: 'Ettevõte asutada <strong>11.-13. juunil</strong>. Tellida materjale kohe pärast.' },
+            { type: 'received', sender: 'JARVIS', time: 'täna', text: 'Soovitan enne Madridi reisi:<br>· Salvesta tarnijate kontaktid<br>· Vali ettevõtte nimi<br>· Vaata OÜ asutamise sammud (e-äriregister.ee)' },
+        ]
+    },
+    madrid: {
+        name: 'Madrid ✈️',
+        sub: '5.–9. juuni 2026 · Apartamento Moratalaz',
+        tag: 'Reis',
+        messages: [
+            { type: 'sent', sender: 'Mina', time: '26. märts', text: 'Lend Londonisse: 5. juuni 11:00–12:15<br>Madrid: 5. juuni 15:15–9. juuni 14:50<br>Majutus: Apartamento Moratalaz cerca A3' },
+            { type: 'received', sender: 'JARVIS', time: 'täna', text: 'Pakkimise nimekiri Madridiks:<br>· Must outfit ✓<br>· Päikeseprillid ✓<br>· Pruun kleit + valge kasukas (juba Pärnus täna!)<br>· Passi dokumendid<br>· Helkur kott-kaunistus — võta turundusfoto!' },
+        ]
+    },
+    notes: {
+        name: 'Mõtted & ideed',
+        sub: 'Sinu privaatne märkmik',
+        tag: 'Isiklik',
+        messages: [
+            { type: 'sent', sender: 'Mina', time: 'täna', text: 'Siia saad kirjutada mida iganes. Ideed, plaanid, unistused — ainult sinu jaoks.' },
+        ]
+    }
+};
+
+let currentThread = 'jarvis';
+
+function loadThread(id) {
+    currentThread = id;
+    const t = threads[id];
+
+    // update header
+    document.getElementById('chatName').textContent = t.name;
+    document.getElementById('chatSub').textContent = t.sub;
+    document.getElementById('chatTag').textContent = t.tag;
+
+    // update sidebar active
+    document.querySelectorAll('.thread').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // render messages
+    renderMessages(t.messages);
+}
+
+function renderMessages(msgs) {
+    const container = document.getElementById('messages');
+    container.innerHTML = '';
+    msgs.forEach(m => {
+        if (m.type === 'system') {
+            const el = document.createElement('div');
+            el.className = 'system-msg';
+            el.textContent = m.text;
+            container.appendChild(el);
+        } else {
+            const el = document.createElement('div');
+            el.className = `msg ${m.type}`;
+            el.innerHTML = `
+                <div class="msg-sender">${m.sender}</div>
+                <div class="msg-bubble">${m.text}</div>
+                <div class="msg-time">${m.time}</div>
+            `;
+            container.appendChild(el);
+        }
+    });
+    container.scrollTop = container.scrollHeight;
+}
+
+function sendMsg() {
+    const box = document.getElementById('composeBox');
+    const text = box.value.trim();
+    if (!text) return;
+
+    const t = threads[currentThread];
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+
+    t.messages.push({ type: 'sent', sender: 'Mina', time: `${h}:${m}`, text: text });
+    box.value = '';
+    renderMessages(t.messages);
+}
+
+function newDraft() {
+    threads['notes'].messages.push({
+        type: 'system', text: 'Uus vestlus alustatud'
+    });
+    loadThreadById('notes');
+}
+
+function loadThreadById(id) {
+    currentThread = id;
+    const t = threads[id];
+    document.getElementById('chatName').textContent = t.name;
+    document.getElementById('chatSub').textContent = t.sub;
+    document.getElementById('chatTag').textContent = t.tag;
+    renderMessages(t.messages);
+}
+
+// compose tags
+document.querySelectorAll('.compose-tag').forEach(tag => {
+    tag.addEventListener('click', function() {
+        document.querySelectorAll('.compose-tag').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
+
+// enter to send
+document.getElementById('composeBox').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+});
+
+// clock
+function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+        String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+}
+tick(); setInterval(tick, 1000);
+
+// initial load
+renderMessages(threads.jarvis.messages);
+</script>
+</body>
+</html>
